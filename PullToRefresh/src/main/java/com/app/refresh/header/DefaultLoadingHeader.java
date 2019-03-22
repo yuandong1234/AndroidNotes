@@ -3,6 +3,7 @@ package com.app.refresh.header;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,6 +22,13 @@ public class DefaultLoadingHeader extends LoadingLayout {
     private ImageView arrow;
     private TextView description;
     private RotateImageView progressBar;
+    private State currentState = State.STATUS_REFRESH_FINISHED;
+
+    /**
+     * 记录上一次的状态是什么，避免进行重复操作
+     */
+    private State lastState = currentState;
+
 
     public DefaultLoadingHeader(Context context) {
         super(context);
@@ -38,6 +46,56 @@ public class DefaultLoadingHeader extends LoadingLayout {
 
     @Override
     public void setState(State state) {
-        super.setState(state);
+        currentState = state;
+        if (lastState != currentState) {
+            switch (state) {
+                case STATUS_PULL_TO_REFRESH:
+                    arrow.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.INVISIBLE);
+                    rotateArrow();
+                    description.setText(getContext().getResources().getString(R.string.pull_to_refresh));
+                    break;
+                case STATUS_RELEASE_TO_REFRESH:
+                    arrow.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.INVISIBLE);
+                    rotateArrow();
+                    description.setText(getContext().getResources().getString(R.string.release_to_refresh));
+                    break;
+                case STATUS_REFRESHING:
+                    arrow.clearAnimation();
+                    arrow.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.VISIBLE);
+                    description.setText(getContext().getResources().getString(R.string.refreshing));
+                    break;
+                case STATUS_REFRESH_FINISHED:
+                    arrow.setVisibility(View.INVISIBLE);
+                    progressBar.setVisibility(View.INVISIBLE);
+                    description.setText(getContext().getResources().getString(R.string.refresh_finished));
+                    break;
+            }
+        }
+        lastState = currentState;
+    }
+
+    /**
+     * 根据当前的状态来旋转箭头。
+     */
+    private void rotateArrow() {
+        float pivotX = arrow.getWidth() / 2f;
+        float pivotY = arrow.getHeight() / 2f;
+        float fromDegrees = 0f;
+        float toDegrees = 0f;
+        if (currentState == State.STATUS_PULL_TO_REFRESH) {
+            fromDegrees = 180f;
+            toDegrees = 360f;
+        } else if (currentState == State.STATUS_RELEASE_TO_REFRESH) {
+            fromDegrees = 0f;
+            toDegrees = 180f;
+        }
+
+        RotateAnimation animation = new RotateAnimation(fromDegrees, toDegrees, pivotX, pivotY);
+        animation.setDuration(100);
+        animation.setFillAfter(true);
+        arrow.startAnimation(animation);
     }
 }

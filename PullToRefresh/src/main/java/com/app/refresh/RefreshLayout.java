@@ -7,10 +7,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.widget.ScrollView;
 import android.widget.Scroller;
 
 import com.app.refresh.header.DefaultLoadingHeader;
+import com.app.refresh.intercept.ViewInterceptManager;
 import com.app.refresh.internal.LoadingLayout;
 import com.app.refresh.listener.RefreshListener;
 
@@ -32,7 +32,7 @@ public class RefreshLayout extends ViewGroup {
     private RefreshListener listener;
 
     private static final int SCROLL_SPEED = 500;
-    private float MOVE_FACTOR = 0.25f;
+    private float MOVE_FACTOR = 0.3f;
     private Scroller scroller;
     private int touchSlop;//最小view滚动距离
 
@@ -97,6 +97,9 @@ public class RefreshLayout extends ViewGroup {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         System.out.println("dispatchTouchEvent ...");
+//        if (currentState == State.STATUS_REFRESHING || currentState == State.STATUS_LOADING) {
+//            return false;
+//        }
         return super.dispatchTouchEvent(ev);
     }
 
@@ -115,11 +118,14 @@ public class RefreshLayout extends ViewGroup {
                 System.out.println("onInterceptTouchEvent : move");
                 float distance = currentY - mLastY;
                 if (distance > 0) {
-                    intercept = canPullDown();
+                    intercept = ViewInterceptManager.canPullDown(contentView, touchSlop, distance);
                 } else if (distance < 0) {
-                    intercept = canPullUp();
+                    intercept = ViewInterceptManager.canPullUp(contentView, touchSlop, distance, getMeasuredHeight());
                 } else {
                     intercept = false;
+                }
+                if (currentState == State.STATUS_REFRESHING||currentState == State.STATUS_LOADING) {//正在刷新或加载的时候拦截
+                    intercept = true;
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -144,13 +150,34 @@ public class RefreshLayout extends ViewGroup {
                 float deltaY = nowY - mLastY;
                 int offset = (int) (deltaY * MOVE_FACTOR);
                 System.out.println("deltaY :" + deltaY + " offset :" + offset);
+                if (getScrollY() < 0) {//下拉
+                    if (getScrollY() <= -headerHeight) {
+                        //释放立即刷新
+                        currentState = State.STATUS_RELEASE_TO_REFRESH;
+                        header.setState(State.STATUS_RELEASE_TO_REFRESH);
+                    } else {
+                        //下拉可以刷新
+                        currentState = State.STATUS_PULL_TO_REFRESH;
+                        header.setState(State.STATUS_PULL_TO_REFRESH);
+                    }
+                }
                 scrollBy(0, -offset);
                 break;
             case MotionEvent.ACTION_UP:
                 canScroll = true;
+                // int scrollY = getScrollY();
+//                System.out.println("scrollY :" + scrollY);
+//                scroller.startScroll(0, scrollY, 0, -scrollY, 500);
+//                invalidate();
                 int scrollY = getScrollY();
-                System.out.println("scrollY :" + scrollY);
-                scroller.startScroll(0, scrollY, 0, -scrollY, 500);
+                if (scrollY <= -headerHeight) {
+                    //正在刷新
+                    currentState = State.STATUS_REFRESHING;
+                    header.setState(State.STATUS_REFRESHING);
+                    scroller.startScroll(0, getScrollY(), 0, -(scrollY + headerHeight), SCROLL_SPEED);
+                } else {
+                    scroller.startScroll(0, scrollY, 0, -scrollY, SCROLL_SPEED);
+                }
                 invalidate();
                 break;
         }
@@ -183,25 +210,5 @@ public class RefreshLayout extends ViewGroup {
 
     public void setHeader(LoadingLayout header) {
         this.header = header;
-    }
-
-    private boolean canPullDown() {
-        boolean enable = false;
-        if (contentView instanceof ScrollView) {
-            if (contentView.getScrollY() <= 0) {
-                enable = true;
-            }
-        }
-        return enable;
-    }
-
-    private boolean canPullUp() {
-        boolean enable = false;
-        if (contentView instanceof ScrollView) {
-            if (contentView.getScrollY() >= (((ScrollView) contentView).getChildAt(0).getHeight() - contentView.getHeight())) {
-                enable = true;
-            }
-        }
-        return enable;
     }
 }
