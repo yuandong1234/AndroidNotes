@@ -41,6 +41,7 @@ public class RefreshLayout extends ViewGroup {
     private boolean enableLoadMore = true;
     private boolean canScroll;
     private float mLastY;
+    private boolean isRefreshing, isLoading;
 
 
     public RefreshLayout(Context context) {
@@ -78,20 +79,28 @@ public class RefreshLayout extends ViewGroup {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         Log.e(TAG, "view onLayout ...");
-        int height = 0;
-        int count = getChildCount();
-        for (int i = 0; i < count; i++) {
-            View child = getChildAt(i);
-            if (child == header) {
-                headerHeight = child.getMeasuredHeight();
-                Log.e(TAG, "headerHeight : " + headerHeight);
-                child.layout(0, -headerHeight, child.getMeasuredWidth(), 0);
-            } else {
-                contentView = child;
-                child.layout(0, height, child.getMeasuredWidth(), height + child.getMeasuredHeight());
-                height += child.getMeasuredHeight();
+        if (!loadOnce) {
+            int height = 0;
+            int count = getChildCount();
+            for (int i = 0; i < count; i++) {
+                View child = getChildAt(i);
+                if (child == header) {
+                    headerHeight = child.getMeasuredHeight();
+                    Log.e(TAG, "headerHeight : " + headerHeight);
+                    child.layout(0, -headerHeight, child.getMeasuredWidth(), 0);
+                } else if (child == footer) {
+                    footerHeight = child.getMeasuredHeight();
+                    child.layout(0, height, child.getMeasuredWidth(), height + footerHeight);
+                    Log.e(TAG, "hideFooterHeight : " + footerHeight);
+                } else {
+                    contentView = child;
+                    child.layout(0, height, child.getMeasuredWidth(), height + child.getMeasuredHeight());
+                    height += child.getMeasuredHeight();
+                }
             }
+            loadOnce = true;
         }
+
     }
 
     @Override
@@ -117,14 +126,14 @@ public class RefreshLayout extends ViewGroup {
             case MotionEvent.ACTION_MOVE:
                 System.out.println("onInterceptTouchEvent : move");
                 float distance = currentY - mLastY;
-                if (distance > 0) {
+                if (distance > 0) {//pull down
                     intercept = ViewInterceptManager.canPullDown(contentView, touchSlop, distance);
-                } else if (distance < 0) {
+                } else if (distance < 0) {//pull up
                     intercept = ViewInterceptManager.canPullUp(contentView, touchSlop, distance, getMeasuredHeight());
                 } else {
                     intercept = false;
                 }
-                if (currentState == State.STATUS_REFRESHING||currentState == State.STATUS_LOADING) {//正在刷新或加载的时候拦截
+                if (currentState == State.STATUS_REFRESHING || currentState == State.STATUS_LOADING) {//正在刷新或加载的时候拦截
                     intercept = true;
                 }
                 break;
@@ -161,20 +170,34 @@ public class RefreshLayout extends ViewGroup {
                         header.setState(State.STATUS_PULL_TO_REFRESH);
                     }
                 }
+
+                if (getScrollY() > 0) {
+                    if (getScrollY() >= footerHeight) {
+                        currentState = State.STATUS_RELEASE_TO_LOADING;
+                        footer.setState(State.STATUS_RELEASE_TO_LOADING);
+                    } else {
+                        currentState = State.STATUS_PULL_TO_LOADING;
+                        footer.setState(State.STATUS_PULL_TO_LOADING);
+                    }
+                }
+
                 scrollBy(0, -offset);
                 break;
             case MotionEvent.ACTION_UP:
                 canScroll = true;
-                // int scrollY = getScrollY();
-//                System.out.println("scrollY :" + scrollY);
-//                scroller.startScroll(0, scrollY, 0, -scrollY, 500);
-//                invalidate();
                 int scrollY = getScrollY();
                 if (scrollY <= -headerHeight) {
                     //正在刷新
-                    currentState = State.STATUS_REFRESHING;
+                    Log.e(TAG, "currentState : " + currentState);
                     header.setState(State.STATUS_REFRESHING);
+                    currentState = State.STATUS_REFRESHING;
                     scroller.startScroll(0, getScrollY(), 0, -(scrollY + headerHeight), SCROLL_SPEED);
+                    if (!isRefreshing) {
+                        isRefreshing = true;
+                        if (listener != null) {
+                            listener.onRefresh();
+                        }
+                    }
                 } else {
                     scroller.startScroll(0, scrollY, 0, -scrollY, SCROLL_SPEED);
                 }
@@ -200,6 +223,9 @@ public class RefreshLayout extends ViewGroup {
     private void addHeader() {
         addView(getHeader());
     }
+    private void addFooter(){
+
+    }
 
     public LoadingLayout getHeader() {
         if (header == null) {
@@ -210,5 +236,36 @@ public class RefreshLayout extends ViewGroup {
 
     public void setHeader(LoadingLayout header) {
         this.header = header;
+    }
+
+    public LoadingLayout getFooter() {
+        return footer;
+    }
+
+    public void setFooter(LoadingLayout footer) {
+        this.footer = footer;
+    }
+
+    public void onRefreshComplete() {
+        //刷新完毕
+        Log.e(TAG, "The view refresh complete");
+        currentState = State.STATUS_REFRESH_FINISHED;
+        header.setState(State.STATUS_REFRESH_FINISHED);
+        isRefreshing = false;
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                scroller.startScroll(0, getScrollY(), 0, -getScrollY(), SCROLL_SPEED);
+                invalidate();
+            }
+        }, 300);
+    }
+
+    public RefreshListener getListener() {
+        return listener;
+    }
+
+    public void setListener(RefreshListener listener) {
+        this.listener = listener;
     }
 }
