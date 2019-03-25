@@ -91,7 +91,7 @@ public class RefreshLayout extends ViewGroup {
                 } else if (child == footer) {
                     footerHeight = child.getMeasuredHeight();
                     child.layout(0, height, child.getMeasuredWidth(), height + footerHeight);
-                    Log.e(TAG, "hideFooterHeight : " + footerHeight);
+                    Log.e(TAG, "footerHeight : " + footerHeight);
                 } else {
                     contentView = child;
                     child.layout(0, height, child.getMeasuredWidth(), height + child.getMeasuredHeight());
@@ -171,7 +171,7 @@ public class RefreshLayout extends ViewGroup {
                     }
                 }
 
-                if (getScrollY() > 0) {
+                if (getScrollY() > 0) {//上拉
                     if (getScrollY() >= footerHeight) {
                         currentState = State.STATUS_RELEASE_TO_LOADING;
                         footer.setState(State.STATUS_RELEASE_TO_LOADING);
@@ -180,7 +180,6 @@ public class RefreshLayout extends ViewGroup {
                         footer.setState(State.STATUS_PULL_TO_LOADING);
                     }
                 }
-
                 scrollBy(0, -offset);
                 break;
             case MotionEvent.ACTION_UP:
@@ -198,6 +197,10 @@ public class RefreshLayout extends ViewGroup {
                             listener.onRefresh();
                         }
                     }
+                } else if (scrollY >= footerHeight) {
+                    //正在加载
+
+
                 } else {
                     scroller.startScroll(0, scrollY, 0, -scrollY, SCROLL_SPEED);
                 }
@@ -223,7 +226,8 @@ public class RefreshLayout extends ViewGroup {
     private void addHeader() {
         addView(getHeader());
     }
-    private void addFooter(){
+
+    private void addFooter() {
 
     }
 
