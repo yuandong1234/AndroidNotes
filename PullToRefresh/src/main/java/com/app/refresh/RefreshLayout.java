@@ -9,6 +9,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.Scroller;
 
+import com.app.refresh.footer.DefaultLoadingFooter;
 import com.app.refresh.header.DefaultLoadingHeader;
 import com.app.refresh.intercept.ViewInterceptManager;
 import com.app.refresh.internal.LoadingLayout;
@@ -41,7 +42,10 @@ public class RefreshLayout extends ViewGroup {
     private boolean enableLoadMore = true;
     private boolean canScroll;
     private float mLastY;
+
     private boolean isRefreshing, isLoading;
+    private int REFRESH_COUNT;
+    private int LOADING_COUNT;
 
 
     public RefreshLayout(Context context) {
@@ -64,12 +68,13 @@ public class RefreshLayout extends ViewGroup {
         Log.e(TAG, "view init finished ...");
         if (getChildCount() > 1) throw new RuntimeException("Only one child view can be included!");
         addHeader();
+        addFooter();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        Log.e(TAG, "view onMeasure ...");
+        Log.i(TAG, "view onMeasure ...");
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             measureChild(child, widthMeasureSpec, heightMeasureSpec);
@@ -78,7 +83,7 @@ public class RefreshLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        Log.e(TAG, "view onLayout ...");
+        Log.i(TAG, "view onLayout ...");
         if (!loadOnce) {
             int height = 0;
             int count = getChildCount();
@@ -86,12 +91,12 @@ public class RefreshLayout extends ViewGroup {
                 View child = getChildAt(i);
                 if (child == header) {
                     headerHeight = child.getMeasuredHeight();
-                    Log.e(TAG, "headerHeight : " + headerHeight);
+                    Log.i(TAG, "headerHeight : " + headerHeight);
                     child.layout(0, -headerHeight, child.getMeasuredWidth(), 0);
                 } else if (child == footer) {
                     footerHeight = child.getMeasuredHeight();
                     child.layout(0, height, child.getMeasuredWidth(), height + footerHeight);
-                    Log.e(TAG, "hideFooterHeight : " + footerHeight);
+                    Log.i(TAG, "footerHeight : " + footerHeight);
                 } else {
                     contentView = child;
                     child.layout(0, height, child.getMeasuredWidth(), height + child.getMeasuredHeight());
@@ -143,7 +148,7 @@ public class RefreshLayout extends ViewGroup {
                 break;
         }
         mLastY = currentY;
-        Log.e(TAG, "intercept " + intercept);
+        Log.i(TAG, "intercept " + intercept);
         return intercept;
     }
 
@@ -159,6 +164,7 @@ public class RefreshLayout extends ViewGroup {
                 float deltaY = nowY - mLastY;
                 int offset = (int) (deltaY * MOVE_FACTOR);
                 System.out.println("deltaY :" + deltaY + " offset :" + offset);
+
                 if (getScrollY() < 0) {//下拉
                     if (getScrollY() <= -headerHeight) {
                         //释放立即刷新
@@ -168,19 +174,22 @@ public class RefreshLayout extends ViewGroup {
                         //下拉可以刷新
                         currentState = State.STATUS_PULL_TO_REFRESH;
                         header.setState(State.STATUS_PULL_TO_REFRESH);
+                        isRefreshing = false;
                     }
                 }
 
-                if (getScrollY() > 0) {
+                if (getScrollY() > 0) {//上拉
                     if (getScrollY() >= footerHeight) {
+                        //释放立即加载
                         currentState = State.STATUS_RELEASE_TO_LOADING;
                         footer.setState(State.STATUS_RELEASE_TO_LOADING);
                     } else {
+                        //上拉刷新
                         currentState = State.STATUS_PULL_TO_LOADING;
                         footer.setState(State.STATUS_PULL_TO_LOADING);
+                        isLoading = false;
                     }
                 }
-
                 scrollBy(0, -offset);
                 break;
             case MotionEvent.ACTION_UP:
@@ -188,14 +197,28 @@ public class RefreshLayout extends ViewGroup {
                 int scrollY = getScrollY();
                 if (scrollY <= -headerHeight) {
                     //正在刷新
-                    Log.e(TAG, "currentState : " + currentState);
-                    header.setState(State.STATUS_REFRESHING);
                     currentState = State.STATUS_REFRESHING;
+                    header.setState(State.STATUS_REFRESHING);
                     scroller.startScroll(0, getScrollY(), 0, -(scrollY + headerHeight), SCROLL_SPEED);
                     if (!isRefreshing) {
                         isRefreshing = true;
+                        REFRESH_COUNT++;
+                        Log.i(TAG, " REFRESH_COUNT : " + REFRESH_COUNT);
                         if (listener != null) {
                             listener.onRefresh();
+                        }
+                    }
+                } else if (scrollY >= footerHeight) {
+                    //正在加载
+                    currentState = State.STATUS_LOADING;
+                    footer.setState(State.STATUS_LOADING);
+                    scroller.startScroll(0, getScrollY(), 0, -(scrollY - footerHeight), SCROLL_SPEED);
+                    if (!isLoading) {
+                        isLoading = true;
+                        LOADING_COUNT++;
+                        Log.i(TAG, " LOADING_COUNT : " + LOADING_COUNT);
+                        if (listener != null) {
+                            listener.onLoadMore();
                         }
                     }
                 } else {
@@ -223,8 +246,9 @@ public class RefreshLayout extends ViewGroup {
     private void addHeader() {
         addView(getHeader());
     }
-    private void addFooter(){
 
+    private void addFooter() {
+        addView(getFooter());
     }
 
     public LoadingLayout getHeader() {
@@ -239,6 +263,9 @@ public class RefreshLayout extends ViewGroup {
     }
 
     public LoadingLayout getFooter() {
+        if (footer == null) {
+            footer = new DefaultLoadingFooter(getContext());
+        }
         return footer;
     }
 
@@ -247,11 +274,32 @@ public class RefreshLayout extends ViewGroup {
     }
 
     public void onRefreshComplete() {
+        Log.i(TAG, "onRefreshComplete ......");
+        REFRESH_COUNT--;
+        if (REFRESH_COUNT > 0) return;
         //刷新完毕
-        Log.e(TAG, "The view refresh complete");
+        Log.i(TAG, "The view refresh complete");
         currentState = State.STATUS_REFRESH_FINISHED;
         header.setState(State.STATUS_REFRESH_FINISHED);
         isRefreshing = false;
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                scroller.startScroll(0, getScrollY(), 0, -getScrollY(), SCROLL_SPEED);
+                invalidate();
+            }
+        }, 300);
+    }
+
+    public void onLoadMoreComplete() {
+        Log.i(TAG, "onLoadMoreComplete ......");
+        LOADING_COUNT--;
+        if (LOADING_COUNT > 0) return;
+        //加载完毕
+        Log.i(TAG, "The view load more  complete");
+        currentState = State.STATUS_REFRESH_FINISHED;
+        footer.setState(State.STATUS_REFRESH_FINISHED);
+        isLoading = false;
         postDelayed(new Runnable() {
             @Override
             public void run() {

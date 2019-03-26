@@ -3,6 +3,7 @@ package com.app.refresh.intercept;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 /**
@@ -15,9 +16,9 @@ public class ViewInterceptManager {
         if (view instanceof ScrollView) {
             return ScrollViewIntercept.canPullDown(view);
         } else if (view instanceof AdapterView) {
-            return true;
+            return AdapterViewIntercept.canPullDown(view);
         } else if (view instanceof RecyclerView) {
-            return true;
+            return RecyclerViewIntercept.canPullDown(view);
         } else {
             if (Math.abs(distance) >= touchSlop) {
                 return true;
@@ -30,9 +31,9 @@ public class ViewInterceptManager {
         if (view instanceof ScrollView) {
             return ScrollViewIntercept.canPullUp(view);
         } else if (view instanceof AdapterView) {
-            return true;
+            return AdapterViewIntercept.canPullUp(view, viewGroupHeight);
         } else if (view instanceof RecyclerView) {
-            return true;
+            return RecyclerViewIntercept.canPullUp(view);
         } else {
             if (Math.abs(distance) >= touchSlop) {
                 return true;
