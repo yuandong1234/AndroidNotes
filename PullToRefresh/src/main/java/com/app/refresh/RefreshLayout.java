@@ -92,11 +92,19 @@ public class RefreshLayout extends ViewGroup {
                 if (child == header) {
                     headerHeight = child.getMeasuredHeight();
                     Log.i(TAG, "headerHeight : " + headerHeight);
-                    child.layout(0, -headerHeight, child.getMeasuredWidth(), 0);
+                    if (enableRefresh) {
+                        child.layout(0, -headerHeight, child.getMeasuredWidth(), 0);
+                    } else {
+                        child.layout(0, 0, 0, 0);
+                    }
                 } else if (child == footer) {
                     footerHeight = child.getMeasuredHeight();
-                    child.layout(0, height, child.getMeasuredWidth(), height + footerHeight);
                     Log.i(TAG, "footerHeight : " + footerHeight);
+                    if (enableLoadMore) {
+                        child.layout(0, height, child.getMeasuredWidth(), height + footerHeight);
+                    } else {
+                        child.layout(0, 0, 0, 0);
+                    }
                 } else {
                     contentView = child;
                     child.layout(0, height, child.getMeasuredWidth(), height + child.getMeasuredHeight());
@@ -195,7 +203,7 @@ public class RefreshLayout extends ViewGroup {
             case MotionEvent.ACTION_UP:
                 canScroll = true;
                 int scrollY = getScrollY();
-                if (scrollY <= -headerHeight) {
+                if (scrollY <= -headerHeight && enableRefresh) {
                     //正在刷新
                     currentState = State.STATUS_REFRESHING;
                     header.setState(State.STATUS_REFRESHING);
@@ -208,7 +216,7 @@ public class RefreshLayout extends ViewGroup {
                             listener.onRefresh();
                         }
                     }
-                } else if (scrollY >= footerHeight) {
+                } else if (scrollY >= footerHeight && enableLoadMore) {
                     //正在加载
                     currentState = State.STATUS_LOADING;
                     footer.setState(State.STATUS_LOADING);
@@ -315,5 +323,17 @@ public class RefreshLayout extends ViewGroup {
 
     public void setListener(RefreshListener listener) {
         this.listener = listener;
+    }
+
+    public void setEnableRefresh(boolean enableRefresh) {
+        this.enableRefresh = enableRefresh;
+        loadOnce = false;
+        requestLayout();
+    }
+
+    public void setEnableLoadMore(boolean enableLoadMore) {
+        this.enableLoadMore = enableLoadMore;
+        loadOnce = false;
+        requestLayout();
     }
 }

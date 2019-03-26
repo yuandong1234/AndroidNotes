@@ -69,6 +69,7 @@ public class PullToRefreshActivity extends AppCompatActivity implements RefreshL
             @Override
             public void run() {
                 refreshLayout.onRefreshComplete();
+                //refreshLayout.setEnableRefresh(false);
             }
         }, 5000);
     }
@@ -79,6 +80,7 @@ public class PullToRefreshActivity extends AppCompatActivity implements RefreshL
             @Override
             public void run() {
                 refreshLayout.onLoadMoreComplete();
+                //refreshLayout.setEnableLoadMore(false);
             }
         }, 5000);
     }
