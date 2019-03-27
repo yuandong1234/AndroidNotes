@@ -27,10 +27,11 @@ public class PullToRefreshActivity extends AppCompatActivity implements RefreshL
     private ListView listView;
     private RecyclerView recyclerView;
     private Handler handler = new Handler();
-    private String[] data = {"item1", "item2", "item3", "item4", "item5",
-            "item6", "item7", "item8", "item9", "item10", "item11",
-            "item12", "item13", "item14", "item15", "item16",
-            "item17", "item18", "item19", "item20", "item21"};
+//    private String[] data = {"item1", "item2", "item3", "item4", "item5",
+//            "item6", "item7", "item8", "item9", "item10", "item11",
+//            "item12", "item13", "item14", "item15", "item16",
+//            "item17", "item18", "item19", "item20", "item21"};
+    private String[] data = {};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,7 @@ public class PullToRefreshActivity extends AppCompatActivity implements RefreshL
 //        });
 
         //ListView
-        //listView = findViewById(R.id.listView);
+//        listView = findViewById(R.id.listView);
 //        MyAdapter adapter=new MyAdapter(this);
 //        listView.setAdapter(adapter);
 

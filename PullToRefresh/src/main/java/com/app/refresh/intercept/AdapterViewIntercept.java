@@ -29,7 +29,6 @@ public class AdapterViewIntercept {
         if (adapterView.getCount() == 0) {
             return false;
         }
-
         // 判断AbsListView是否已经到达内容最底部
         if (adapterView.getLastVisiblePosition() == adapterView.getCount() - 1
                 && (adapterView.getChildAt(adapterView.getChildCount() - 1).getBottom() == viewGroupHeight)) {

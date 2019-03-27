@@ -10,17 +10,22 @@ import android.view.View;
 public class RecyclerViewIntercept {
     public static boolean canPullDown(View child) {
         boolean intercept = false;
-
-        RecyclerView recyclerChild = (RecyclerView) child;
-        if (recyclerChild.computeVerticalScrollOffset() <= 0)
+        RecyclerView recyclerView = (RecyclerView) child;
+        if (recyclerView.getChildCount() == 0) {
+            return true;
+        }
+        if (recyclerView.computeVerticalScrollOffset() <= 0)
             intercept = true;
         return intercept;
     }
 
     public static boolean canPullUp(View child) {
         boolean intercept = false;
-        RecyclerView recyclerChild = (RecyclerView) child;
-        if (recyclerChild.computeVerticalScrollExtent() + recyclerChild.computeVerticalScrollOffset() >= recyclerChild.computeVerticalScrollRange())
+        RecyclerView recyclerView = (RecyclerView) child;
+        if (recyclerView.getChildCount() == 0) {
+            return false;
+        }
+        if (recyclerView.computeVerticalScrollExtent() + recyclerView.computeVerticalScrollOffset() >= recyclerView.computeVerticalScrollRange())
             intercept = true;
 
         return intercept;
