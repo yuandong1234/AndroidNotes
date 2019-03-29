@@ -6,7 +6,8 @@
     <com.app.refresh.RefreshLayout
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#F2F3F5">
 
         <!--<ScrollView-->
         <!--android:id="@+id/container"-->
@@ -95,12 +96,13 @@
         <ListView
             android:id="@+id/listView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@android:color/white"/>
 
         <!--<android.support.v7.widget.RecyclerView-->
-            <!--android:id="@+id/recyclerView"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent" />-->
+        <!--android:id="@+id/recyclerView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
 
 
     </com.app.refresh.RefreshLayout>

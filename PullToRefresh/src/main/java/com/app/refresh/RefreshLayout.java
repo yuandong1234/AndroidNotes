@@ -165,21 +165,25 @@ public class RefreshLayout extends ViewGroup {
                 Log.e(TAG, "onInterceptTouchEvent : move ： " + distance);
                 int scrollY = getScrollY();
                 Log.e(TAG, "ScrollY : " + scrollY);
+
+                //TODO 有问题
                 if (distance > 0) {//下拉
+                    Log.e(TAG, "pull down ****");
                     intercept = ViewInterceptManager.canPullDown(contentView, touchSlop, distance);
                 } else if (distance < 0) {//上拉
+                    Log.e(TAG, "pull up ****");
                     intercept = ViewInterceptManager.canPullUp(contentView, touchSlop, distance, getMeasuredHeight());
                 } else {
                     intercept = false;
                 }
 
+
+                //TODO 正在刷新的时候，强行上拉存在问题
+                Log.e(TAG, "currentState : "+currentState);
                 if (currentState == State.STATUS_REFRESHING || currentState == State.STATUS_LOADING) {//正在刷新或加载的时候拦截
-                    return true;
+                    intercept = true;
                 }
 
-//                if (scrollY != 0) {
-//                    intercept = true;
-//                }
                 break;
             case MotionEvent.ACTION_UP:
                 Log.e(TAG, "onInterceptTouchEvent : up");
@@ -196,6 +200,7 @@ public class RefreshLayout extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
         float y = event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -323,18 +328,16 @@ public class RefreshLayout extends ViewGroup {
         //刷新完毕
         Log.i(TAG, "The view refresh complete");
         isRefreshing = false;
-        currentState = State.STATUS_REFRESH_FINISHED;
         header.setState(State.STATUS_REFRESH_FINISHED);
 
-        scroller.startScroll(0, getScrollY(), 0, -getScrollY(), SCROLL_SPEED);
-        invalidate();
-//        postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                scroller.startScroll(0, getScrollY(), 0, -getScrollY(), SCROLL_SPEED);
-//                invalidate();
-//            }
-//        }, 300);
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                scroller.startScroll(0, getScrollY(), 0, -getScrollY(), SCROLL_SPEED);
+                postInvalidate();
+                currentState = State.STATUS_REFRESH_FINISHED;
+            }
+        }, 300);
     }
 
     public void onLoadMoreComplete() {
@@ -345,17 +348,14 @@ public class RefreshLayout extends ViewGroup {
         //加载完毕
         Log.i(TAG, "The view load more  complete");
         isLoading = false;
-        currentState = State.STATUS_REFRESH_FINISHED;
         footer.setState(State.STATUS_REFRESH_FINISHED);
-
-//        scroller.startScroll(0, getScrollY(), 0, -getScrollY(), SCROLL_SPEED);
-//        invalidate();
 
         postDelayed(new Runnable() {
             @Override
             public void run() {
                 scroller.startScroll(0, getScrollY(), 0, -getScrollY(), SCROLL_SPEED);
-                invalidate();
+                postInvalidate();
+                currentState = State.STATUS_REFRESH_FINISHED;
             }
         }, 300);
     }

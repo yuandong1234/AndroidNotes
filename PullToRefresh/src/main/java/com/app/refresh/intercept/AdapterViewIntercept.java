@@ -13,7 +13,6 @@ public class AdapterViewIntercept {
     public static boolean canPullDown(View child) {
         boolean intercept = true;
         AdapterView adapterView = (AdapterView) child;
-        Log.e("AdapterViewIntercept","canPullDown: "+adapterView.getCount());
         if (adapterView.getCount() == 0) return true;
         // 判断AbsListView是否已经到达内容最顶部
         if (adapterView.getFirstVisiblePosition() != 0 || adapterView.getChildAt(0).getTop() != 0) {
@@ -26,7 +25,6 @@ public class AdapterViewIntercept {
     public static boolean canPullUp(View child, int viewGroupHeight) {
         boolean intercept = false;
         AdapterView adapterView = (AdapterView) child;
-        Log.e("AdapterViewIntercept","canPullUp: "+adapterView.getCount());
         if (adapterView.getCount() == 0) return false;
 
         // 判断AbsListView是否已经到达内容最底部
