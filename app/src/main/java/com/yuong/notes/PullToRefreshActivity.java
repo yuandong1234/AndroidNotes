@@ -27,11 +27,16 @@ public class PullToRefreshActivity extends AppCompatActivity implements RefreshL
     private ListView listView;
     private RecyclerView recyclerView;
     private Handler handler = new Handler();
-//    private String[] data = {"item1", "item2", "item3", "item4", "item5",
-//            "item6", "item7", "item8", "item9", "item10", "item11",
-//            "item12", "item13", "item14", "item15", "item16",
-//            "item17", "item18", "item19", "item20", "item21"};
-    private String[] data = {};
+    private String[] data = {"item1", "item2", "item3", "item4", "item5",
+            "item6", "item7", "item8", "item9", "item10", "item11",
+            "item12", "item13", "item14", "item15", "item16",
+            "item17", "item18", "item19", "item20", "item21",
+            "item22", "item23", "item24", "item25", "item26",
+            "item27", "item28", "item29", "item30", "item31",
+            "item32", "item33", "item34", "item35", "item36",
+            "item37", "item38", "item39", "item40", "item41",
+            "item42", "item43", "item44", "item45", "item46"};
+   // private String[] data = {};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,18 +54,18 @@ public class PullToRefreshActivity extends AppCompatActivity implements RefreshL
 //        });
 
         //ListView
-//        listView = findViewById(R.id.listView);
-//        MyAdapter adapter=new MyAdapter(this);
-//        listView.setAdapter(adapter);
+        listView = findViewById(R.id.listView);
+        MyAdapter adapter=new MyAdapter(this);
+        listView.setAdapter(adapter);
 
 
         //RecyclerView
-        recyclerView = findViewById(R.id.recyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        layoutManager.setOrientation(OrientationHelper.VERTICAL);
-        My2Adapter adapter=new My2Adapter(this);
-        recyclerView.setAdapter(adapter);
+//        recyclerView = findViewById(R.id.recyclerView);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+//        recyclerView.setLayoutManager(layoutManager);
+//        layoutManager.setOrientation(OrientationHelper.VERTICAL);
+//        My2Adapter adapter=new My2Adapter(this);
+//        recyclerView.setAdapter(adapter);
     }
 
     @Override
