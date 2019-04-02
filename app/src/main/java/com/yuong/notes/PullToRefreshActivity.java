@@ -10,6 +10,7 @@ import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -23,6 +24,7 @@ import com.app.refresh.listener.RefreshListener;
  * 下拉刷新上拉加载测试用例
  */
 public class PullToRefreshActivity extends AppCompatActivity implements RefreshListener {
+    private static final String TAG=PullToRefreshActivity.class.getSimpleName();
     private RefreshLayout refreshLayout;
     private ListView listView;
     private RecyclerView recyclerView;
@@ -57,6 +59,14 @@ public class PullToRefreshActivity extends AppCompatActivity implements RefreshL
         listView = findViewById(R.id.listView);
         MyAdapter adapter=new MyAdapter(this);
         listView.setAdapter(adapter);
+        listView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                Log.e(TAG,"listView OnTouch...");
+                return false;
+            }
+        });
+
 
 
         //RecyclerView

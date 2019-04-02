@@ -32,7 +32,7 @@ public class RefreshLayout extends ViewGroup {
     private State currentState;
     private RefreshListener listener;
 
-    private static final int SCROLL_SPEED = 500;
+    private static final int SCROLL_SPEED = 300;
     private float MOVE_FACTOR = 0.3f;
     private Scroller scroller;
     private int touchSlop;//最小view滚动距离
@@ -114,17 +114,21 @@ public class RefreshLayout extends ViewGroup {
         }
     }
 
+    private float dispatchLastY;
+    private boolean isMoving;
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         // Log.e(TAG, "dispatchTouchEvent ...");
 //        if (currentState == State.STATUS_REFRESHING || currentState == State.STATUS_LOADING) {
 //            return false;
 //        }
-
+        float currentY = ev.getY();
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                //mLastY = 0;
+                isMoving = false;
                 Log.e(TAG, "dispatchTouchEvent : down");
+                dispatchLastY = currentY;
                 break;
             case MotionEvent.ACTION_MOVE:
                 Log.e(TAG, "dispatchTouchEvent : move");
@@ -132,15 +136,19 @@ public class RefreshLayout extends ViewGroup {
             case MotionEvent.ACTION_UP:
                 Log.e(TAG, "dispatchTouchEvent : up");
                 //mLastY = 0;
+                isMoving = false;
                 break;
         }
+
+        dispatchLastY = currentY;
         return super.dispatchTouchEvent(ev);
+
+        //return onInterceptTouchEvent(ev);
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         Log.e(TAG, "onInterceptTouchEvent");
-
         float currentY = ev.getY();
         boolean intercept = false;
         Log.e(TAG, " currentY : " + currentY);
@@ -157,6 +165,7 @@ public class RefreshLayout extends ViewGroup {
                 //mInterceptLastX = currentX;
                 Log.e(TAG, "mInterceptLastY : " + mInterceptLastY);
                 intercept = false;
+                isMoving = false;
                 break;
             case MotionEvent.ACTION_MOVE:
                 Log.e(TAG, "onInterceptTouchEvent : move");
@@ -168,27 +177,28 @@ public class RefreshLayout extends ViewGroup {
 
                 //TODO 有问题
                 if (distance > 0) {//下拉
-                    Log.e(TAG, "pull down ****");
+                    Log.e(TAG, "--------------> pull down <-------------- ");
                     intercept = ViewInterceptManager.canPullDown(contentView, touchSlop, distance);
                 } else if (distance < 0) {//上拉
-                    Log.e(TAG, "pull up ****");
+                    Log.e(TAG, "--------------> pull up <-------------- ");
                     intercept = ViewInterceptManager.canPullUp(contentView, touchSlop, distance, getMeasuredHeight());
                 } else {
                     intercept = false;
                 }
 
-
-                //TODO 正在刷新的时候，强行上拉存在问题
-                Log.e(TAG, "currentState : "+currentState);
-                if (currentState == State.STATUS_REFRESHING || currentState == State.STATUS_LOADING) {//正在刷新或加载的时候拦截
+                //TODO 当viewGroup 有竖直方向滑动时，禁止contentView滑动
+                if (scrollY != 0) {
                     intercept = true;
                 }
-
                 break;
             case MotionEvent.ACTION_UP:
                 Log.e(TAG, "onInterceptTouchEvent : up");
                 intercept = false;
                 canScroll = true;
+                isMoving = false;
+                //防止 下拉或上拉滑动一段距离，突然松手，然后再次迅速触摸屏幕且迅速松开，导致卡住的问题
+                scroller.startScroll(0, getScrollY(), 0, -getScrollY(), SCROLL_SPEED);
+                postInvalidate();
                 break;
         }
         mInterceptLastY = currentY;
@@ -200,7 +210,10 @@ public class RefreshLayout extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
+        Log.e(TAG, "currentState : " + currentState);
+//        if (currentState == State.STATUS_REFRESHING || currentState == State.STATUS_LOADING) {//正在刷新或加载的时候拦截
+//            return true;
+//        }
         float y = event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -213,7 +226,6 @@ public class RefreshLayout extends ViewGroup {
                 float deltaY = nowY - mLastY;
                 int offset = (int) (deltaY * MOVE_FACTOR);
                 Log.e(TAG, "deltaY :" + deltaY + " offset :" + offset);
-
                 if (getScrollY() < 0) {//下拉
                     if (getScrollY() <= -headerHeight) {
                         //释放立即刷新
@@ -239,7 +251,27 @@ public class RefreshLayout extends ViewGroup {
                         isLoading = false;
                     }
                 }
-                scrollBy(0, -offset);
+
+                //TODO 下拉过程中，先拉下头部，手不离开屏幕再上拉，尾部会显示出来
+                boolean isCanScroll = true;
+                if (deltaY > 0) {//下拉
+                    isCanScroll = ViewInterceptManager.canPullDown(contentView, touchSlop, offset);
+                    if (getScrollY() > 0) {
+                        isCanScroll = true;
+                    }
+                } else if (deltaY < 0) {//上拉
+                    isCanScroll = ViewInterceptManager.canPullUp(contentView, touchSlop, offset, getMeasuredHeight());
+                    if (getScrollY() < 0) {//如果刷新头部显示，允许上拉
+                        isCanScroll = true;
+                    }
+                }
+                Log.e(TAG, "isCanScroll :" + isCanScroll);
+                if (isCanScroll) {
+                    isMoving = false;
+                    scrollBy(0, -offset);
+                } else {
+                    isMoving = true;
+                }
                 break;
             case MotionEvent.ACTION_UP:
                 Log.e(TAG, "onTouchEvent : up");
@@ -321,7 +353,7 @@ public class RefreshLayout extends ViewGroup {
     }
 
     public void onRefreshComplete() {
-        Log.e(TAG, "onRefreshComplete ...... REFRESH_COUNT : " + REFRESH_COUNT + "  isRefreshing : " + isRefreshing);
+        Log.e(TAG, "onRefreshComplete ...... REFRESH_COUNT : " + REFRESH_COUNT + "  isRefreshing : " + isRefreshing + "  canScroll  :" + canScroll);
         REFRESH_COUNT--;
         if (REFRESH_COUNT > 0) return;
         if (!isRefreshing) return;
