@@ -42,7 +42,6 @@ public class RefreshLayout extends ViewGroup {
     private boolean canScroll;
     private float mLastY;
     private float mInterceptLastY;
-    //private float mInterceptLastX;
 
     private boolean isRefreshing, isLoading;
     private int REFRESH_COUNT;
@@ -114,36 +113,22 @@ public class RefreshLayout extends ViewGroup {
         }
     }
 
-    private float dispatchLastY;
-    private boolean isMoving;
-
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        // Log.e(TAG, "dispatchTouchEvent ...");
-//        if (currentState == State.STATUS_REFRESHING || currentState == State.STATUS_LOADING) {
-//            return false;
-//        }
         float currentY = ev.getY();
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                isMoving = false;
                 Log.e(TAG, "dispatchTouchEvent : down");
-                dispatchLastY = currentY;
+
                 break;
             case MotionEvent.ACTION_MOVE:
                 Log.e(TAG, "dispatchTouchEvent : move");
                 break;
             case MotionEvent.ACTION_UP:
                 Log.e(TAG, "dispatchTouchEvent : up");
-                //mLastY = 0;
-                isMoving = false;
                 break;
         }
-
-        dispatchLastY = currentY;
         return super.dispatchTouchEvent(ev);
-
-        //return onInterceptTouchEvent(ev);
     }
 
     @Override
@@ -165,7 +150,6 @@ public class RefreshLayout extends ViewGroup {
                 //mInterceptLastX = currentX;
                 Log.e(TAG, "mInterceptLastY : " + mInterceptLastY);
                 intercept = false;
-                isMoving = false;
                 break;
             case MotionEvent.ACTION_MOVE:
                 Log.e(TAG, "onInterceptTouchEvent : move");
@@ -175,7 +159,7 @@ public class RefreshLayout extends ViewGroup {
                 int scrollY = getScrollY();
                 Log.e(TAG, "ScrollY : " + scrollY);
 
-                //TODO 有问题
+                //TODO 有问题，有时候下拉会出现 distance小于0
                 if (distance > 0) {//下拉
                     Log.e(TAG, "--------------> pull down <-------------- ");
                     intercept = ViewInterceptManager.canPullDown(contentView, touchSlop, distance);
@@ -186,7 +170,7 @@ public class RefreshLayout extends ViewGroup {
                     intercept = false;
                 }
 
-                //TODO 当viewGroup 有竖直方向滑动时，禁止contentView滑动
+                // 当viewGroup 有竖直方向滑动时，禁止contentView滑动
                 if (scrollY != 0) {
                     intercept = true;
                 }
@@ -195,7 +179,6 @@ public class RefreshLayout extends ViewGroup {
                 Log.e(TAG, "onInterceptTouchEvent : up");
                 intercept = false;
                 canScroll = true;
-                isMoving = false;
                 //防止 下拉或上拉滑动一段距离，突然松手，然后再次迅速触摸屏幕且迅速松开，导致卡住的问题
                 scroller.startScroll(0, getScrollY(), 0, -getScrollY(), SCROLL_SPEED);
                 postInvalidate();
@@ -225,9 +208,10 @@ public class RefreshLayout extends ViewGroup {
                 float nowY = event.getY();
                 float deltaY = nowY - mLastY;
                 int offset = (int) (deltaY * MOVE_FACTOR);
-                Log.e(TAG, "deltaY :" + deltaY + " offset :" + offset);
-                if (getScrollY() < 0) {//下拉
-                    if (getScrollY() <= -headerHeight) {
+                int currentScrollY = getScrollY();
+                Log.e(TAG, "deltaY :" + deltaY + " offset :" + offset + " currentScrollY : " + currentScrollY);
+                if (currentScrollY < 0) {//下拉
+                    if (currentScrollY <= -headerHeight) {
                         //释放立即刷新
                         currentState = State.STATUS_RELEASE_TO_REFRESH;
                         header.setState(State.STATUS_RELEASE_TO_REFRESH);
@@ -239,8 +223,8 @@ public class RefreshLayout extends ViewGroup {
                     }
                 }
 
-                if (getScrollY() > 0) {//上拉
-                    if (getScrollY() >= footerHeight) {
+                if (currentScrollY > 0) {//上拉
+                    if (currentScrollY >= footerHeight) {
                         //释放立即加载
                         currentState = State.STATUS_RELEASE_TO_LOADING;
                         footer.setState(State.STATUS_RELEASE_TO_LOADING);
@@ -252,25 +236,38 @@ public class RefreshLayout extends ViewGroup {
                     }
                 }
 
-                //TODO 下拉过程中，先拉下头部，手不离开屏幕再上拉，尾部会显示出来
+                //TODO  bug: 下拉过程中，先拉下头部，手不离开屏幕再上拉，尾部会显示出来
                 boolean isCanScroll = true;
                 if (deltaY > 0) {//下拉
                     isCanScroll = ViewInterceptManager.canPullDown(contentView, touchSlop, offset);
-                    if (getScrollY() > 0) {
+                    if (currentScrollY > 0) {//如果加载尾部显示，允许往下移动
                         isCanScroll = true;
+//                        /**
+//                         * 判断手势滑动的距离与getScrollY的大小,当手势的距离大于viewgroup内容竖直方向滑动的距离时，
+//                         * 设置手势偏移量等于viewgroup内容竖直方向滑动的距离
+//                         */
+                        if (Math.abs(offset) >= Math.abs(currentScrollY)) {
+                            offset = currentScrollY;
+                        }
                     }
                 } else if (deltaY < 0) {//上拉
                     isCanScroll = ViewInterceptManager.canPullUp(contentView, touchSlop, offset, getMeasuredHeight());
-                    if (getScrollY() < 0) {//如果刷新头部显示，允许上拉
+                    if (currentScrollY < 0) {//如果刷新头部显示，允许往上移动
                         isCanScroll = true;
+
+//                        /**
+//                         * 判断手势滑动的距离与getScrollY的大小,当手势的距离大于viewgroup内容竖直方向滑动的距离时，
+//                         * 设置手势偏移量等于viewgroup内容竖直方向滑动的距离
+//                         */
+                        if (Math.abs(offset) >= Math.abs(currentScrollY)) {
+                            offset = currentScrollY;
+                        }
                     }
                 }
+
                 Log.e(TAG, "isCanScroll :" + isCanScroll);
                 if (isCanScroll) {
-                    isMoving = false;
                     scrollBy(0, -offset);
-                } else {
-                    isMoving = true;
                 }
                 break;
             case MotionEvent.ACTION_UP:
