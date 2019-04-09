@@ -1,6 +1,5 @@
 package com.app.refresh.intercept;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -31,7 +30,6 @@ public class AdapterViewIntercept {
         if (adapterView.getLastVisiblePosition() == adapterView.getCount() - 1 &&
                 (adapterView.getChildAt(adapterView.getChildCount() - 1).getBottom() == viewGroupHeight)) {
             // 如果到达底部，则拦截事件
-            Log.e("AdapterViewIntercept","listView 已经滑倒底部了");
             intercept = true;
         }
         return intercept;

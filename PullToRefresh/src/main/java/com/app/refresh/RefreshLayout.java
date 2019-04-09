@@ -265,6 +265,10 @@ public class RefreshLayout extends ViewGroup {
                     }
                 }
 
+                if ((offset > 0 && !enableRefresh)||(offset < 0 && !enableLoadMore)) {//手动禁止下拉或手动禁止上拉
+                    isCanScroll = false;
+                }
+
                 Log.e(TAG, "isCanScroll :" + isCanScroll);
                 if (isCanScroll) {
                     scrollBy(0, -offset);

@@ -85,7 +85,7 @@ public class PullToRefreshActivity extends AppCompatActivity implements RefreshL
             @Override
             public void run() {
                 refreshLayout.onRefreshComplete();
-                //refreshLayout.setEnableRefresh(false);
+                refreshLayout.setEnableRefresh(false);
             }
         }, 3000);
     }
