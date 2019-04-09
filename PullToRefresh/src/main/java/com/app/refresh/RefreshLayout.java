@@ -360,6 +360,7 @@ public class RefreshLayout extends ViewGroup {
         if (!isRefreshing) return;
         //刷新完毕
         Log.i(TAG, "The view refresh complete");
+        //TODO 有问题 刷新完毕的时候，手势还在按住屏幕
         isRefreshing = false;
         header.setState(State.STATUS_REFRESH_FINISHED);
 
