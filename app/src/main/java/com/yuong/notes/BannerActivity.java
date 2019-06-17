@@ -11,9 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.zhouwei.mzbanner.MZBannerView;
+import com.zhouwei.mzbanner.holder.MZHolderCreator;
+import com.zhouwei.mzbanner.holder.MZViewHolder;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class BannerActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
+    private MZBannerView mz_viewPager;
 
     private int datas[] = {R.drawable.img_01, R.drawable.img_02, R.drawable.img_03, R.drawable.img_04};
 
@@ -32,6 +40,24 @@ public class BannerActivity extends AppCompatActivity {
         //viewPager.setPageTransformer(true, new CoverModeTransformer(viewPager));
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(new CustomViewPager(this, datas));
+
+
+        List<Integer> list = new ArrayList<>();
+        for(int i=0;i<datas.length;i++){
+            list.add(datas[i]);
+        }
+
+        mz_viewPager = findViewById(R.id.mz_viewPager);
+        mz_viewPager.setIndicatorVisible(true);
+        // 代码中更改indicator 的位置
+        //mMZBanner.setIndicatorAlign(MZBannerView.IndicatorAlign.LEFT);
+        //mMZBanner.setIndicatorPadding(10,0,0,150);
+        mz_viewPager.setPages(list, new MZHolderCreator<BannerViewHolder>() {
+            @Override
+            public BannerViewHolder createViewHolder() {
+                return new BannerViewHolder();
+            }
+        });
     }
 
     /**
@@ -72,6 +98,23 @@ public class BannerActivity extends AppCompatActivity {
         @Override
         public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             container.removeView((View) object);
+        }
+    }
+
+    public static class BannerViewHolder implements MZViewHolder<Integer> {
+        private ImageView mImageView;
+        @Override
+        public View createView(Context context) {
+            // 返回页面布局文件
+            View view = LayoutInflater.from(context).inflate(R.layout.item_layout_viewpager,null);
+            mImageView = (ImageView) view.findViewById(R.id.img);
+            return view;
+        }
+
+        @Override
+        public void onBind(Context context, int position, Integer data) {
+            // 数据绑定
+            mImageView.setImageResource(data);
         }
     }
 }
