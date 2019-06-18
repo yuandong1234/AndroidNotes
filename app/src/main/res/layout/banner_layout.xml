@@ -2,26 +2,25 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#000000"
     android:orientation="vertical">
 
     <com.yuong.notes.widget.banner.BannerViewPager
         android:id="@+id/banner_vp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#3bafff"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp" />
+        android:layout_height="wrap_content" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_gravity="bottom">
 
         <LinearLayout
             android:id="@+id/banner_indicator_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="#f2f3f5"
             android:layout_centerHorizontal="true"
             android:orientation="horizontal" />
     </RelativeLayout>

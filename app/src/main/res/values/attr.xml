@@ -2,6 +2,8 @@
 <resources>
     <declare-styleable name="BannerView">
         <attr name="canLoop" format="boolean"/>
+        <attr name="PaddingLeft" format="dimension"/>
+        <attr name="PaddingRight" format="dimension"/>
         <attr name="indicatorPaddingLeft" format="dimension"/>
         <attr name="indicatorPaddingRight" format="dimension"/>
         <attr name="indicatorPaddingTop" format="dimension"/>

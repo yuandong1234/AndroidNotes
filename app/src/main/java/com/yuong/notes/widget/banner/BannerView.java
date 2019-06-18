@@ -12,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -48,6 +49,8 @@ public class BannerView<T> extends RelativeLayout {
     private int mIndicatorPaddingRight = 0;//indicator 距离右边的距离
     private int mIndicatorPaddingTop = 0;//indicator 距离上边的距离
     private int mIndicatorPaddingBottom = 0;//indicator 距离下边的距离
+    private int mBannerPaddingLeft = 0;//BannerViewPager左右内边距（由于前后显示了上下一个页面的部分）
+    private int mBannerPaddingRight = 0;
     private int mIndicatorAlign = 1;
     private OnPageChangeListener mOnPageChangeListener;
     private BannerPageClickListener mBannerPageClickListener;
@@ -78,6 +81,8 @@ public class BannerView<T> extends RelativeLayout {
     private void readAttrs(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.BannerView);
         mIsCanLoop = typedArray.getBoolean(R.styleable.BannerView_canLoop, false);
+        mBannerPaddingLeft = typedArray.getDimensionPixelSize(R.styleable.BannerView_PaddingLeft, 0);
+        mBannerPaddingRight = typedArray.getDimensionPixelSize(R.styleable.BannerView_PaddingRight, 0);
         mIndicatorAlign = typedArray.getInt(R.styleable.BannerView_indicatorAlign, IndicatorAlign.CENTER.ordinal());
         mIndicatorPaddingLeft = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorPaddingLeft, 0);
         mIndicatorPaddingRight = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorPaddingRight, 0);
@@ -91,6 +96,7 @@ public class BannerView<T> extends RelativeLayout {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.banner_layout, this, true);
         mIndicatorContainer = view.findViewById(R.id.banner_indicator_container);
         mViewPager = view.findViewById(R.id.banner_vp);
+        mViewPager.setPadding(mBannerPaddingLeft, 0, mBannerPaddingRight, 0);
         mViewPager.setOffscreenPageLimit(3);
         // 初始化Scroller
         initViewPagerScroll();
@@ -152,6 +158,7 @@ public class BannerView<T> extends RelativeLayout {
         mIndicatorContainer.setLayoutParams(layoutParams);
 
     }
+
     /**
      * 初始化指示器Indicator
      */
@@ -349,7 +356,7 @@ public class BannerView<T> extends RelativeLayout {
      * 设置数据，这是最重要的一个方法。
      * <p>其他的配置应该在这个方法之前调用</p>
      *
-     * @param datas           Banner 展示的数据集合
+     * @param datas         Banner 展示的数据集合
      * @param holderCreator ViewHolder生成器 {@link BannerHolderCreator} And {@link BannerViewHolder}
      */
     public void setPages(List<T> datas, BannerHolderCreator holderCreator) {

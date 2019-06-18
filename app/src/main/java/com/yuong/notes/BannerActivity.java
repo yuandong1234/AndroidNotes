@@ -52,7 +52,7 @@ public class BannerActivity extends AppCompatActivity {
 
         bannerView = findViewById(R.id.banner_view);
         bannerView.setIndicatorVisible(true);
-        //bannerView.setIndicatorAlign(BannerView.IndicatorAlign.LEFT);
+        bannerView.setIndicatorAlign(BannerView.IndicatorAlign.LEFT);
         bannerView.setCanLoop(true);
         bannerView.setPages(list, new BannerHolderCreator<BannerViewHolder>() {
             @Override

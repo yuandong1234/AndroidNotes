@@ -22,7 +22,9 @@
             android:id="@+id/banner_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:indicatorPaddingBottom="30dp"/>
+            app:PaddingLeft="15dp"
+            app:PaddingRight="15dp"
+            app:indicatorPaddingBottom="15dp"/>
 
         <ImageView
             android:layout_width="200dp"
