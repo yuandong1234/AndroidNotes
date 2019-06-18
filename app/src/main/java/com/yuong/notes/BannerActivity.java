@@ -11,9 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.zhouwei.mzbanner.MZBannerView;
-import com.zhouwei.mzbanner.holder.MZHolderCreator;
-import com.zhouwei.mzbanner.holder.MZViewHolder;
+import com.yuong.notes.widget.banner.BannerView;
+import com.yuong.notes.widget.banner.holder.BannerHolderCreator;
+import com.yuong.notes.widget.banner.holder.BannerViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +21,12 @@ import java.util.List;
 public class BannerActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
-    private MZBannerView mz_viewPager;
+    private BannerView bannerView;
 
 
-    private int datas[] = { R.drawable.img_02, R.drawable.img_03, R.drawable.img_04};
+    private int datas[] = {R.drawable.img_02, R.drawable.img_03, R.drawable.img_04};
+//    private int datas[] = {R.drawable.img_02};
+//    private int datas[] = {R.drawable.img_02, R.drawable.img_03};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,19 +46,18 @@ public class BannerActivity extends AppCompatActivity {
 
 
         List<Integer> list = new ArrayList<>();
-        for(int i=0;i<datas.length;i++){
+        for (int i = 0; i < datas.length; i++) {
             list.add(datas[i]);
         }
 
-        mz_viewPager = findViewById(R.id.mz_viewPager);
-        mz_viewPager.setIndicatorVisible(true);
-        // 代码中更改indicator 的位置
-        //mMZBanner.setIndicatorAlign(MZBannerView.IndicatorAlign.LEFT);
-        //mMZBanner.setIndicatorPadding(10,0,0,150);
-        mz_viewPager.setPages(list, new MZHolderCreator<BannerViewHolder>() {
+        bannerView = findViewById(R.id.banner_view);
+        bannerView.setIndicatorVisible(true);
+        //bannerView.setIndicatorAlign(BannerView.IndicatorAlign.LEFT);
+        bannerView.setCanLoop(true);
+        bannerView.setPages(list, new BannerHolderCreator<BannerViewHolder>() {
             @Override
             public BannerViewHolder createViewHolder() {
-                return new BannerViewHolder();
+                return new BannerViewHolder1();
             }
         });
     }
@@ -102,13 +103,14 @@ public class BannerActivity extends AppCompatActivity {
         }
     }
 
-    public static class BannerViewHolder implements MZViewHolder<Integer> {
+    public static class BannerViewHolder1 implements BannerViewHolder<Integer> {
         private ImageView mImageView;
+
         @Override
         public View createView(Context context) {
             // 返回页面布局文件
-            View view = LayoutInflater.from(context).inflate(R.layout.item_layout_viewpager,null);
-            mImageView = (ImageView) view.findViewById(R.id.img);
+            View view = LayoutInflater.from(context).inflate(R.layout.item_layout_viewpager, null);
+            mImageView = view.findViewById(R.id.img);
             return view;
         }
 
