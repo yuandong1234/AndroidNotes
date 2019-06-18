@@ -6,5 +6,5 @@ public interface BannerHolderCreator<VH extends BannerViewHolder> {
      * 创建ViewHolder
      * @return
      */
-    public VH createViewHolder();
+     VH createViewHolder();
 }
