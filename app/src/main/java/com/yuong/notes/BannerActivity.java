@@ -23,7 +23,8 @@ public class BannerActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private MZBannerView mz_viewPager;
 
-    private int datas[] = {R.drawable.img_01, R.drawable.img_02, R.drawable.img_03, R.drawable.img_04};
+
+    private int datas[] = { R.drawable.img_02, R.drawable.img_03, R.drawable.img_04};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,7 @@ public class BannerActivity extends AppCompatActivity {
         //viewPager.setPageTransformer(true, new ScaleYTransformer());
         //viewPager.setPageTransformer(true, new CoverModeTransformer(viewPager));
         viewPager.setOffscreenPageLimit(2);
-        viewPager.setAdapter(new CustomViewPager(this, datas));
+        viewPager.setAdapter(new CustomViewPagerAdapter(this, datas));
 
 
         List<Integer> list = new ArrayList<>();
@@ -64,12 +65,12 @@ public class BannerActivity extends AppCompatActivity {
      * PagerAdapter、FragmentPagerAdapter、FragmentStatePagerAdapter
      */
 
-    private class CustomViewPager extends PagerAdapter {
+    private class CustomViewPagerAdapter extends PagerAdapter {
         private Context context;
         private LayoutInflater inflater;
         private int[] data;
 
-        public CustomViewPager(Context context, int[] data) {
+        public CustomViewPagerAdapter(Context context, int[] data) {
             this.context = context;
             this.data = data;
             this.inflater = LayoutInflater.from(context);
