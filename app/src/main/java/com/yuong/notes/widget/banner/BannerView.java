@@ -12,7 +12,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -45,10 +44,10 @@ public class BannerView<T> extends RelativeLayout {
     private ArrayList<ImageView> mIndicators = new ArrayList<>();
     //mIndicatorRes[0] 为未选中，mIndicatorRes[1]为选中
     private int[] mIndicatorRes = new int[]{R.drawable.indicator_normal, R.drawable.indicator_selected};
-    private int mIndicatorPaddingLeft = 0;// indicator 距离左边的距离
-    private int mIndicatorPaddingRight = 0;//indicator 距离右边的距离
-    private int mIndicatorPaddingTop = 0;//indicator 距离上边的距离
-    private int mIndicatorPaddingBottom = 0;//indicator 距离下边的距离
+    private int mIndicatorMarginLeft = 0;// indicator 距离左边的距离
+    private int mIndicatorMarginRight = 0;//indicator 距离右边的距离
+    private int mIndicatorMarginTop = 0;//indicator 距离上边的距离
+    private int mIndicatorMarginBottom = 0;//indicator 距离下边的距离
     private int mBannerPaddingLeft = 0;//BannerViewPager左右内边距（由于前后显示了上下一个页面的部分）
     private int mBannerPaddingRight = 0;
     private int mIndicatorAlign = 1;
@@ -84,10 +83,10 @@ public class BannerView<T> extends RelativeLayout {
         mBannerPaddingLeft = typedArray.getDimensionPixelSize(R.styleable.BannerView_PaddingLeft, 0);
         mBannerPaddingRight = typedArray.getDimensionPixelSize(R.styleable.BannerView_PaddingRight, 0);
         mIndicatorAlign = typedArray.getInt(R.styleable.BannerView_indicatorAlign, IndicatorAlign.CENTER.ordinal());
-        mIndicatorPaddingLeft = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorPaddingLeft, 0);
-        mIndicatorPaddingRight = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorPaddingRight, 0);
-        mIndicatorPaddingTop = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorPaddingTop, 0);
-        mIndicatorPaddingBottom = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorPaddingBottom, 0);
+        mIndicatorMarginLeft = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorMarginLeft, 0);
+        mIndicatorMarginRight = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorMarginRight, 0);
+        mIndicatorMarginTop = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorMarginTop, 0);
+        mIndicatorMarginBottom = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorMarginBottom, 0);
         typedArray.recycle();
     }
 
@@ -154,7 +153,7 @@ public class BannerView<T> extends RelativeLayout {
             layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         }
 
-        layoutParams.setMargins(0, mIndicatorPaddingTop, 0, mIndicatorPaddingBottom);
+        layoutParams.setMargins(0, mIndicatorMarginTop, 0, mIndicatorMarginBottom);
         mIndicatorContainer.setLayoutParams(layoutParams);
 
     }
@@ -169,14 +168,16 @@ public class BannerView<T> extends RelativeLayout {
             ImageView imageView = new ImageView(getContext());
             if (mIndicatorAlign == IndicatorAlign.LEFT.ordinal()) {
                 if (i == 0) {
-                    imageView.setPadding(mIndicatorPaddingLeft + 6, 0, 6, 0);
+                    int paddingLeft = mIndicatorMarginLeft + mBannerPaddingLeft;
+                    imageView.setPadding(paddingLeft + 6, 0, 6, 0);
                 } else {
                     imageView.setPadding(6, 0, 6, 0);
                 }
 
             } else if (mIndicatorAlign == IndicatorAlign.RIGHT.ordinal()) {
                 if (i == mDatas.size() - 1) {
-                    imageView.setPadding(6, 0, 6 + mIndicatorPaddingRight, 0);
+                    int paddingRight = mIndicatorMarginRight + mBannerPaddingRight;
+                    imageView.setPadding(6, 0, 6 + paddingRight, 0);
                 } else {
                     imageView.setPadding(6, 0, 6, 0);
                 }
@@ -317,18 +318,18 @@ public class BannerView<T> extends RelativeLayout {
     }
 
     /**
-     * set indicator padding
+     * set indicator margin
      *
-     * @param paddingLeft
-     * @param paddingTop
-     * @param paddingRight
-     * @param paddingBottom
+     * @param marginLeft
+     * @param marginTop
+     * @param marginRight
+     * @param marginBottom
      */
-    public void setIndicatorPadding(int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
-        mIndicatorPaddingLeft = paddingLeft;
-        mIndicatorPaddingTop = paddingTop;
-        mIndicatorPaddingRight = paddingRight;
-        mIndicatorPaddingBottom = paddingBottom;
+    public void setIndicatorPadding(int marginLeft, int marginTop, int marginRight, int marginBottom) {
+        mIndicatorMarginLeft = marginLeft;
+        mIndicatorMarginRight = marginTop;
+        mIndicatorMarginTop = marginRight;
+        mIndicatorMarginBottom = marginBottom;
         sureIndicatorPosition();
     }
 
