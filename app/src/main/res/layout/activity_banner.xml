@@ -23,9 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:PaddingLeft="15dp"
-            app:PaddingRight="15dp"
-            app:indicatorMarginLeft="15dp"
-            app:indicatorMarginBottom="25dp"/>
+            app:PaddingRight="15dp" />
 
         <ImageView
             android:layout_width="200dp"
