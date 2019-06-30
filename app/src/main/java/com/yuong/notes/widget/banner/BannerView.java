@@ -83,10 +83,10 @@ public class BannerView<T> extends RelativeLayout {
         mBannerPaddingLeft = typedArray.getDimensionPixelSize(R.styleable.BannerView_PaddingLeft, 0);
         mBannerPaddingRight = typedArray.getDimensionPixelSize(R.styleable.BannerView_PaddingRight, 0);
         mIndicatorAlign = typedArray.getInt(R.styleable.BannerView_indicatorAlign, IndicatorAlign.CENTER.ordinal());
-        mIndicatorMarginLeft = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorMarginLeft, 0);
-        mIndicatorMarginRight = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorMarginRight, 0);
+        mIndicatorMarginLeft = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorMarginLeft, dpToPx(15));
+        mIndicatorMarginRight = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorMarginRight,  dpToPx(15));
         mIndicatorMarginTop = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorMarginTop, 0);
-        mIndicatorMarginBottom = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorMarginBottom, 0);
+        mIndicatorMarginBottom = typedArray.getDimensionPixelSize(R.styleable.BannerView_indicatorMarginBottom, dpToPx(25));
         typedArray.recycle();
     }
 

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.yuong.notes.widget.banner.BannerView;
 import com.yuong.notes.widget.banner.holder.BannerHolderCreator;
@@ -54,12 +55,19 @@ public class BannerActivity extends AppCompatActivity {
         bannerView.setIndicatorVisible(true);
         bannerView.setIndicatorAlign(BannerView.IndicatorAlign.CENTER);
         bannerView.setCanLoop(true);
+        bannerView.setBannerPageClickListener(new BannerView.BannerPageClickListener() {
+            @Override
+            public void onPageClick(View view, int position) {
+                Toast.makeText(BannerActivity.this,"position : "+position,Toast.LENGTH_SHORT).show();
+            }
+        });
         bannerView.setPages(list, new BannerHolderCreator<BannerViewHolder>() {
             @Override
             public BannerViewHolder createViewHolder() {
                 return new BannerViewHolder1();
             }
         });
+
     }
 
     /**
