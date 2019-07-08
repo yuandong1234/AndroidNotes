@@ -196,7 +196,6 @@ public class BannerView<T> extends RelativeLayout {
         }
     }
 
-    //TODO 待处理
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (!mIsCanLoop) {
