@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -175,6 +176,14 @@ public class WapRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         });
     }
 
+    /**
+     * computeVerticalScrollExtent 显示区域的高度
+     * computeVerticalScrollOffset  已经向下滚动的距离，为0时表示已处于顶部
+     * computeVerticalScrollRange 整体的高度，注意是整体，包括在显示区域之外的
+     *
+     * @param recyclerView
+     * @return
+     */
     public boolean isScrollToBottom(RecyclerView recyclerView) {
         if (recyclerView == null) {
             return false;
@@ -184,10 +193,18 @@ public class WapRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             LinearLayoutManager linearLayoutManager = (LinearLayoutManager) layoutManager;
             mOrientation = linearLayoutManager.getOrientation();
         }
+        int height = recyclerView.getHeight();
+        Log.i("WapRecyclerViewAdapter", "recyclerView 高度 : " + height);
         if (mOrientation == LinearLayoutManager.HORIZONTAL) {
             return recyclerView.computeHorizontalScrollExtent() + recyclerView.computeHorizontalScrollOffset() >= recyclerView.computeHorizontalScrollRange();
         } else {
-            return recyclerView.computeVerticalScrollExtent() + recyclerView.computeVerticalScrollOffset() >= recyclerView.computeVerticalScrollRange();
+            int scrollExtent = recyclerView.computeVerticalScrollExtent();
+            int scrollOffset = recyclerView.computeVerticalScrollOffset();
+            int scrollRange = recyclerView.computeVerticalScrollRange();
+            Log.i("WapRecyclerViewAdapter", "屏幕可见高度 : " + scrollExtent);
+            Log.i("WapRecyclerViewAdapter", "向下滑动高度 : " + scrollOffset);
+            Log.i("WapRecyclerViewAdapter", "整体全部高度 : " + scrollRange);
+            return (scrollExtent + scrollOffset >= scrollRange) && scrollRange >= height;
         }
     }
 
