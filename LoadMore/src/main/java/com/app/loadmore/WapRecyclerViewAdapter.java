@@ -18,16 +18,32 @@ public class WapRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private RecyclerView.Adapter mRealAdapter;//实际的adapter
     private int mOrientation = -1;
 
-    public void setHeadView(View headView) {
+    public void addHeadView(View headView) {
         this.mHeadView = headView;
     }
 
-    public void setFooterView(View footerView) {
+    public void addFooterView(View footerView) {
         this.mFooterView = footerView;
+    }
+
+    public View getHeadView() {
+        return mHeadView;
+    }
+
+    public View getFooterView() {
+        return mFooterView;
     }
 
     public RecyclerView.Adapter getRealAdapter() {
         return mRealAdapter;
+    }
+
+    public int getHeadViewCount() {
+        return mHeadView != null ? 1 : 0;
+    }
+
+    public int getFooterViewCount() {
+        return mFooterView != null ? 1 : 0;
     }
 
     public WapRecyclerViewAdapter(RecyclerView.Adapter adapter) {
@@ -43,35 +59,42 @@ public class WapRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             } else if (position == getItemCount() - 1) {
                 return ITEM_TYPE_FOOTER;
             } else {
+                if (mRealAdapter.getItemCount() > 1) {
+                    return mRealAdapter.getItemViewType(position);
+                }
                 return ITEM_TYPE_NORMAL;
             }
         } else if (mHeadView != null) {
             if (position == 0) {
                 return ITEM_TYPE_HEADER;
             } else {
+                if (mRealAdapter.getItemCount() > 1) {
+                    return mRealAdapter.getItemViewType(position);
+                }
                 return ITEM_TYPE_NORMAL;
             }
         } else if (mFooterView != null) {
             if (position == getItemCount() - 1) {
                 return ITEM_TYPE_FOOTER;
             } else {
+                if (mRealAdapter.getItemCount() > 1) {
+                    return mRealAdapter.getItemViewType(position);
+                }
                 return ITEM_TYPE_NORMAL;
             }
         } else {
+            if (mRealAdapter.getItemCount() > 1) {
+                return mRealAdapter.getItemViewType(position);
+            }
             return ITEM_TYPE_NORMAL;
         }
     }
 
     @Override
     public int getItemCount() {
-        if (mHeadView != null && mFooterView != null) {
-            return mRealAdapter.getItemCount() + 2;
-        } else if (mHeadView != null) {
-            return mRealAdapter.getItemCount() + 1;
-        } else if (mFooterView != null) {
-            return mRealAdapter.getItemCount() + 1;
-        }
-        return mRealAdapter.getItemCount();
+        int headViewCount = getHeadViewCount();
+        int footerViewCount = getFooterViewCount();
+        return mRealAdapter.getItemCount() + headViewCount + footerViewCount;
     }
 
     @NonNull
