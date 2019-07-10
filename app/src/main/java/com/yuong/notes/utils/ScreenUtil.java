@@ -178,4 +178,15 @@ public class ScreenUtil {
             }
         }
     }
+
+    /**
+     * 获取view在当前屏幕中的位置
+     *
+     * @param view
+     */
+    public static int[] getViewLocationOnScreen(View view) {
+        int[] positions = new int[2];
+        view.getLocationOnScreen(positions);
+        return positions;
+    }
 }
