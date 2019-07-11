@@ -32,7 +32,6 @@ public class PopWindowActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        Log.e("PopWindowActivity", ".................");
         switch (v.getId()) {
             case R.id.btn:
                 popDown();
@@ -56,9 +55,10 @@ public class PopWindowActivity extends AppCompatActivity implements View.OnClick
         popWindow = new CommonPopupWindow.Builder(this)
                 .setView(R.layout.layout_pop_window_view)
                 .setWidth(width)
-                .setHeight(height)
-                //.setAnimationStyle(R.style.AnimDown)
+                //.setHeight(height)
+                .setAnimationStyle(R.style.AnimDown)
                 .setOutsideTouchable(true)
+                .setFocusable(true)
                 //.setBackgroundLevel(0.8f)
                 .build();
 

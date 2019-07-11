@@ -62,7 +62,7 @@ public class CommonPopupWindow extends PopupWindow {
             setAnimationStyle(animationStyle);
         }
         setOutsideTouchable(isTouchable);
-//        setTouchable(true);
+        setTouchable(true);
 
         /**
          *设置setFocusable为true时，setOutsideTouchable无论true还是false ，点击弹窗外部都会消失,点击返回键弹窗也会消失

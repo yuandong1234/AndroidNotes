@@ -35,75 +35,20 @@
                     android:text="pop window2" />
             </LinearLayout>
 
-            <Button
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1" />
+                android:layout_height="120dp"
+                android:padding="10dp"
+                android:background="#F2F3F5"
+                android:text="姚明曾是中国篮坛在国际上最有影响力的球员，在退役后，一直从事篮球工作，特别是在2017年当选中国篮协主席后，姚明对中国篮球的改革和推动有目共睹，此次当选亚篮联委员会主席，中国篮球在亚篮联乃至国际篮联将有更重的话语权。" />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="1" />
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:padding="10dp"
+               android:background="#F2F3F5"
+               android:layout_marginTop="25dp"
+               android:text="湖人签下了两名落选秀卡考克和霍尔曼，这其中卡考克身高2米03能打小前锋和大前锋，此前效力于NCAA的北卡威明顿分晓，场均能够拿下12分10板；霍尔曼则来自于密西西比州立大学，身高2米08主打大前锋，NCAA场均可以拿下8分6板2盖帽"/>
         </LinearLayout>
     </ScrollView>
 
