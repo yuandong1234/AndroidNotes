@@ -32,6 +32,10 @@ public class WarpRecyclerView extends RecyclerView {
         mDataObserver.onChanged();
     }
 
+    public WapRecyclerViewAdapter getAdapter(){
+        return wapAdapter;
+    }
+
 
     public class DataObserver extends RecyclerView.AdapterDataObserver {
 

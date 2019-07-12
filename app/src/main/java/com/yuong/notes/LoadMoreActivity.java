@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.app.loadmore.FooterState;
 import com.app.loadmore.RecyclerViewPageHelper;
 import com.app.loadmore.WapRecyclerViewAdapter;
 import com.app.loadmore.WarpRecyclerView;
@@ -21,8 +23,9 @@ import com.app.loadmore.WarpRecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoadMoreActivity extends AppCompatActivity implements WapRecyclerViewAdapter.LoadMoreListener, View.OnClickListener {
+public class LoadMoreActivity extends AppCompatActivity implements WapRecyclerViewAdapter.LoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = LoadMoreActivity.class.getSimpleName();
+    private SwipeRefreshLayout swipeRefreshLayout;
     private WarpRecyclerView recyclerView;
     private WapRecyclerViewAdapter wapRecyclerViewAdapter;
     private MyAdapter adapter;
@@ -38,8 +41,11 @@ public class LoadMoreActivity extends AppCompatActivity implements WapRecyclerVi
     }
 
     private void initView() {
-        findViewById(R.id.btn).setOnClickListener(this);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         recyclerView = findViewById(R.id.recyclerView);
+
+        swipeRefreshLayout.setOnRefreshListener(this);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -48,18 +54,14 @@ public class LoadMoreActivity extends AppCompatActivity implements WapRecyclerVi
 
         wapRecyclerViewAdapter = new WapRecyclerViewAdapter(adapter);
         wapRecyclerViewAdapter.setLoadMoreListener(recyclerView, this);
-        pageHelper = new RecyclerViewPageHelper(this, wapRecyclerViewAdapter);
+        pageHelper = new RecyclerViewPageHelper(this, recyclerView);
 
         recyclerView.setAdapter(wapRecyclerViewAdapter);
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn:
-                adapter.notifyDataSetChanged();
-                break;
-        }
+    public void onRefresh() {
+
     }
 
     private class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
@@ -118,7 +120,7 @@ public class LoadMoreActivity extends AppCompatActivity implements WapRecyclerVi
 
     private void initData(int page) {
         List<String> data = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 15; i++) {
             String temp = page + "-" + i;
             data.add(temp);
         }
@@ -127,7 +129,6 @@ public class LoadMoreActivity extends AppCompatActivity implements WapRecyclerVi
         } else {
             setMoreData(data);
         }
-
         Log.e(TAG, "size : " + wapRecyclerViewAdapter.getItemCount());
     }
 
@@ -138,19 +139,29 @@ public class LoadMoreActivity extends AppCompatActivity implements WapRecyclerVi
 
     private void setMoreData(List<String> data) {
         adapter.addData(data);
+
+        if (page == 3) {//没有更多~
+            pageHelper.setLoadMoreState(FooterState.END);
+        } else {
+            pageHelper.setLoadMoreState(FooterState.NORMAL);
+        }
     }
 
     @Override
     public void loadMore() {
         Log.e(TAG, "loadMore......................");
-        if (page > 2) return;
+        if (!pageHelper.isCanLoadMore()) {
+            Log.e(TAG, "暂不能加载更多~");
+            return;
+        }
         page++;
+        pageHelper.setLoadMoreState(FooterState.LOADING);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 initData(page);
             }
-        }, 1000);
+        }, 5000);
     }
 
 

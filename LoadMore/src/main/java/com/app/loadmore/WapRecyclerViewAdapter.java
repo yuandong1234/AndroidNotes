@@ -14,7 +14,7 @@ public class WapRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private static final int ITEM_TYPE_NORMAL = 3;
 
     private View mHeadView;
-    private View mFooterView;
+    private LoadingFooter mFooterView;
     private RecyclerView.Adapter mRealAdapter;//实际的adapter
     private int mOrientation = -1;
 
@@ -22,7 +22,7 @@ public class WapRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.mHeadView = headView;
     }
 
-    public void addFooterView(View footerView) {
+    public void addFooterView(LoadingFooter footerView) {
         this.mFooterView = footerView;
     }
 
@@ -30,7 +30,7 @@ public class WapRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return mHeadView;
     }
 
-    public View getFooterView() {
+    public LoadingFooter getFooterView() {
         return mFooterView;
     }
 

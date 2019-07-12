@@ -59,7 +59,7 @@ public class PopWindowActivity extends AppCompatActivity implements View.OnClick
                 .setAnimationStyle(R.style.AnimDown)
                 .setOutsideTouchable(true)
                 .setFocusable(true)
-                //.setBackgroundLevel(0.8f)
+                .setBackgroundLevel(0.8f)
                 .build();
 
         popWindow.showAsDropDown(btn);

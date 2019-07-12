@@ -4,7 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
-public class LoadingFooter extends LinearLayout {
+public abstract class LoadingFooter extends LinearLayout {
+
     public LoadingFooter(Context context) {
         this(context, null);
     }
@@ -14,7 +15,10 @@ public class LoadingFooter extends LinearLayout {
         initView();
     }
 
-    private void initView() {
+    protected abstract void initView();
 
-    }
+    protected abstract  void setFooterState(FooterState state);
+
+    protected abstract FooterState  getFooterState();
+
 }
