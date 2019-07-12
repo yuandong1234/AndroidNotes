@@ -1,6 +1,9 @@
 package com.app.loadmore;
 
 import android.content.Context;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
@@ -76,10 +79,29 @@ public class RecyclerViewPageHelper {
     }
 
     private boolean canAddFooter(WarpRecyclerView recyclerView) {
-        if (recyclerView == null) {
+        if (recyclerView == null || warpRecyclerView.getAdapter() == null) {
             return false;
         }
+        WapRecyclerViewAdapter wapAdapter = warpRecyclerView.getAdapter();
+
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         Log.e("RecyclerViewPageHelper", "*********************");
-        return recyclerView.canScrollVertically(1);
+        if (layoutManager instanceof LinearLayoutManager) {
+            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) layoutManager;
+            int lastPosition = linearLayoutManager.findLastCompletelyVisibleItemPosition();
+            Log.e("RecyclerViewPageHelper", "lastPosition : "+lastPosition);
+            Log.e("RecyclerViewPageHelper", "itemCount : "+wapAdapter.getItemCount());
+            if (lastPosition >= wapAdapter.getItemCount() - 1) {
+                return true;
+            }
+        }
+
+        if (layoutManager instanceof GridLayoutManager) {
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
+            int lastPosition = gridLayoutManager.findLastCompletelyVisibleItemPosition();
+            return lastPosition >= wapAdapter.getItemCount() - 1;
+        }
+
+        return false;
     }
 }
