@@ -192,6 +192,7 @@ public class WapRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+                Log.i("WapRecyclerViewAdapter", "[addOnScrollListener] 滑动监听..." );
                 if (isScrollToBottom(recyclerView) && loadMoreListener != null) {
                     loadMoreListener.loadMore();
                 }

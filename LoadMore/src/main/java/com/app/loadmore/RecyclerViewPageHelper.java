@@ -1,9 +1,6 @@
 package com.app.loadmore;
 
 import android.content.Context;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
@@ -18,22 +15,28 @@ public class RecyclerViewPageHelper {
     }
 
     public void setLoadMoreEnable(boolean enable) {
-        WapRecyclerViewAdapter wapAdapter = warpRecyclerView.getAdapter();
+       final WapRecyclerViewAdapter wapAdapter = warpRecyclerView.getAdapter();
         if (wapAdapter == null) {
             return;
         }
-        View footerView = wapAdapter.getFooterView();
+       final View footerView = wapAdapter.getFooterView();
         if (enable) {
-            boolean addable = canAddFooter(warpRecyclerView);
-            Log.e("RecyclerViewPageHelper", "canAddFooter : " + addable);
-            if (footerView == null && addable) {
-                LoadingFooter footer = new SimpleLoadingFooter(mContext);
-                footer.setFooterState(FooterState.NORMAL);
-                if (wapAdapter.getRealAdapter() != null) {
-                    wapAdapter.addFooterView(footer);
-                    wapAdapter.getRealAdapter().notifyDataSetChanged();
+            warpRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    boolean addable = canAddFooter(warpRecyclerView);
+                    Log.e("RecyclerViewPageHelper", "canAddFooter : " + addable);
+                    if (footerView == null && addable) {
+                        LoadingFooter footer = new SimpleLoadingFooter(mContext);
+                        footer.setFooterState(FooterState.NORMAL);
+                        if (wapAdapter.getRealAdapter() != null) {
+                            wapAdapter.addFooterView(footer);
+                            wapAdapter.getRealAdapter().notifyDataSetChanged();
+                        }
+                    }
                 }
-            }
+            });
+
         } else {
             if (footerView != null) {
                 wapAdapter.addFooterView(null);
@@ -79,29 +82,22 @@ public class RecyclerViewPageHelper {
     }
 
     private boolean canAddFooter(WarpRecyclerView recyclerView) {
-        if (recyclerView == null || warpRecyclerView.getAdapter() == null) {
+        if (recyclerView == null) {
             return false;
         }
-        WapRecyclerViewAdapter wapAdapter = warpRecyclerView.getAdapter();
 
-        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        Log.e("RecyclerViewPageHelper", "*********************");
-        if (layoutManager instanceof LinearLayoutManager) {
-            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) layoutManager;
-            int lastPosition = linearLayoutManager.findLastCompletelyVisibleItemPosition();
-            Log.e("RecyclerViewPageHelper", "lastPosition : "+lastPosition);
-            Log.e("RecyclerViewPageHelper", "itemCount : "+wapAdapter.getItemCount());
-            if (lastPosition >= wapAdapter.getItemCount() - 1) {
-                return true;
-            }
-        }
 
-        if (layoutManager instanceof GridLayoutManager) {
-            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
-            int lastPosition = gridLayoutManager.findLastCompletelyVisibleItemPosition();
-            return lastPosition >= wapAdapter.getItemCount() - 1;
-        }
+        int height = recyclerView.getHeight();
+        Log.i("RecyclerViewPageHelper", "【RecyclerViewPageHelper】recyclerView 高度 : " + height);
 
-        return false;
+        int scrollExtent = recyclerView.computeVerticalScrollExtent();
+        int scrollOffset = recyclerView.computeVerticalScrollOffset();
+        int scrollRange = recyclerView.computeVerticalScrollRange();
+        Log.i("RecyclerViewPageHelper", "【RecyclerViewPageHelper】屏幕可见高度 : " + scrollExtent);
+        Log.i("RecyclerViewPageHelper", "【RecyclerViewPageHelper】向下滑动高度 : " + scrollOffset);
+        Log.i("RecyclerViewPageHelper", "【RecyclerViewPageHelper】整体全部高度 : " + scrollRange);
+        return scrollRange >= height;
+        //return recyclerView.canScrollVertically(1);
+
     }
 }
