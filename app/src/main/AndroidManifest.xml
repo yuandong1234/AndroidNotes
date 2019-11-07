@@ -90,13 +90,22 @@
             <!-- </intent-filter> -->
         </activity>
         <activity android:name=".ProgressActivity">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
+        <activity android:name=".CustomTabActivity">
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
 
                 <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         </activity>
-        <activity android:name=".CustomTabActivity">
+        <activity android:name=".DatePcikerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
