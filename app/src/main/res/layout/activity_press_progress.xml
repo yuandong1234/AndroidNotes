@@ -6,21 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".PressProgressActivity">
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+
+    <com.yuong.notes.widget.PressProgressView
+        android:id="@+id/pressProgressView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_centerInParent="true"
         android:background="@drawable/bg_press_progress"
-        android:padding="6dp">
-
-        <com.yuong.notes.widget.PressProgressView
-            android:id="@+id/pressProgressView"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            app:PressProgress_color="@android:color/white"
-            app:PressProgress_progress="360"
-            app:PressProgress_stroke_width="1dp" />
-    </FrameLayout>
+        android:padding="6dp"
+        app:PressProgress_color="@android:color/white"
+        app:PressProgress_progress="360"
+        app:PressProgress_stroke_width="1dp" />
 
 
 </RelativeLayout>
