@@ -1,7 +1,7 @@
 package com.yuong.notes;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.app.permission.OnPermissionCallback;
@@ -10,9 +10,7 @@ import com.app.permission.PermissionUtil;
 
 import java.util.List;
 
-/**
- * 动态申请权限测试用例
- */
+
 public class PermissionActivity extends AppCompatActivity {
 
     @Override
@@ -32,17 +30,17 @@ public class PermissionActivity extends AppCompatActivity {
                 .request(new OnPermissionCallback() {
                     @Override
                     public void onPermissionGranted(List<String> granted, boolean isAllGranted) {
-                        Log.e("MainActivity", "onPermissionGranted granted : " + granted.toString() + "\n" + " isAllGranted : " + isAllGranted);
+                        Log.e("FlexibleActivity", "onPermissionGranted granted : " + granted.toString() + "\n" + " isAllGranted : " + isAllGranted);
                     }
 
                     @Override
                     public void onPermissionDenied(List<String> denied, List<String> permanentDenied) {
-                        Log.e("MainActivity", "onPermissionDenied denied : " + denied.toString() + "\n" + " permanentDenied : " + permanentDenied.toString());
+                        Log.e("FlexibleActivity", "onPermissionDenied denied : " + denied.toString() + "\n" + " permanentDenied : " + permanentDenied.toString());
                     }
 
                     @Override
                     public void onPermissionComplete() {
-                        Log.e("MainActivity", "onPermissionComplete ... ");
+                        Log.e("FlexibleActivity", "onPermissionComplete ... ");
                     }
                 });
     }

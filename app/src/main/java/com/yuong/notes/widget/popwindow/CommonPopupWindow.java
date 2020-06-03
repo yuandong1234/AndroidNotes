@@ -2,7 +2,8 @@ package com.yuong.notes.widget.popwindow;
 
 import android.app.Activity;
 import android.content.Context;
-import android.view.KeyEvent;
+import android.graphics.Rect;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -197,5 +198,17 @@ public class CommonPopupWindow extends PopupWindow {
             return new CommonPopupWindow(this);
         }
 
+    }
+
+    public void show(final View anchor, final int xoff, final int yoff) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Rect visibleFrame = new Rect();
+            anchor.getGlobalVisibleRect(visibleFrame);
+            int height = anchor.getResources().getDisplayMetrics().heightPixels - visibleFrame.bottom;
+            this.setHeight(height);
+            this.showAsDropDown(anchor, xoff, yoff);
+        } else {
+            this.showAsDropDown(anchor, xoff, yoff);
+        }
     }
 }

@@ -7,9 +7,6 @@ import android.view.View;
 
 import com.yuong.notes.widget.dialog.CommonDialog;
 
-/**
- * 自定义弹框测试用例
- */
 public class DialogActivity extends AppCompatActivity {
 
     @Override

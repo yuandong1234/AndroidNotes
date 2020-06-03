@@ -41,4 +41,10 @@
         <item name="tabPaddingEnd">0dp</item>
     </style>
 
+    <declare-styleable name="PressProgressView">
+        <attr name="PressProgress_color" format="color" />        <!--进度圆环颜色-->
+        <attr name="PressProgress_stroke_width" format="dimension" />        <!--进度圆环宽度-->
+        <attr name="PressProgress_progress" format="integer" />       <!--圆环进度-->
+    </declare-styleable>
+
 </resources>

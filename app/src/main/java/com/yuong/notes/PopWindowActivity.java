@@ -1,8 +1,7 @@
 package com.yuong.notes;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -62,7 +61,7 @@ public class PopWindowActivity extends AppCompatActivity implements View.OnClick
                 .setBackgroundLevel(0.8f)
                 .build();
 
-        popWindow.showAsDropDown(btn);
+        popWindow.show(btn, 0, 0);
     }
 
     @Override

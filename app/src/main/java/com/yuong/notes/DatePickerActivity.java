@@ -6,14 +6,14 @@ import android.util.Log;
 
 import com.yuong.notes.widget.DatePickerView;
 
-public class DatePcikerActivity extends AppCompatActivity {
+public class DatePickerActivity extends AppCompatActivity {
 
     private DatePickerView datePickerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_date_pciker);
+        setContentView(R.layout.activity_date_picker);
         initView();
     }
 
@@ -22,7 +22,7 @@ public class DatePcikerActivity extends AppCompatActivity {
         datePickerView.setCallback(new DatePickerView.OnDateChangeCallback() {
             @Override
             public void onChange(String date) {
-                Log.e("DatePcikerActivity", "date : " + date);
+                Log.e("DatePickerActivity", "date : " + date);
             }
         });
     }

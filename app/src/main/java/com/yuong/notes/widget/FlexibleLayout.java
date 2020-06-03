@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.Scroller;
 
+/**
+ * 滑动冲突目前只适配ScrollView
+ */
 public class FlexibleLayout extends ViewGroup {
 
     private static String TAG = FlexibleLayout.class.getSimpleName();

@@ -7,9 +7,6 @@ import android.view.MotionEvent;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
 
-/**
- * 目前事件冲突只适配ScrollView
- */
 public class FlexibleLinearLayout extends LinearLayout {
 
     private float MOVE_FACTOR = 0.25f;
