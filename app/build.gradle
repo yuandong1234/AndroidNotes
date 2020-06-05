@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.yuong.notes"
         minSdkVersion 16
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         ndk {
@@ -24,15 +24,26 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:design:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation 'com.android.support:cardview-v7:28.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+    implementation 'androidx.appcompat:appcompat:1.2.0-beta01'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.android.material:material:1.2.0-alpha06'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha02'
+    implementation 'androidx.cardview:cardview:1.0.0'
     implementation project(':PermissionLibrary')
     implementation project(':PullToRefresh')
     implementation project(':LoadMore')
+
+    implementation(name: 'core-4.4.0', ext: 'aar')
+    implementation(name: 'html-4.4.0', ext: 'aar')
 }

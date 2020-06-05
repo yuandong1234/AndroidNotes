@@ -6,7 +6,7 @@
     android:background="@android:color/white"
     tools:context=".SampleActivity">
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -193,8 +193,36 @@
                 android:text="自定义长按进度View"
                 android:textColor="#3f3f3f" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#dcdcdc" />
+
+            <TextView
+                android:id="@+id/tv_sample_14"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="使用markwon加载html标签"
+                android:textColor="#3f3f3f" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#dcdcdc" />
+
+            <TextView
+                android:id="@+id/tv_sample_15"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="使用webview加载html标签"
+                android:textColor="#3f3f3f" />
+
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 
 </LinearLayout>

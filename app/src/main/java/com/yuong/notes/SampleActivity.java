@@ -2,7 +2,7 @@ package com.yuong.notes;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 
 public class SampleActivity extends AppCompatActivity implements View.OnClickListener {
@@ -30,6 +30,8 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         findViewById(R.id.tv_sample_11).setOnClickListener(this);
         findViewById(R.id.tv_sample_12).setOnClickListener(this);
         findViewById(R.id.tv_sample_13).setOnClickListener(this);
+        findViewById(R.id.tv_sample_14).setOnClickListener(this);
+        findViewById(R.id.tv_sample_15).setOnClickListener(this);
     }
 
     @Override
@@ -73,6 +75,12 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.tv_sample_13://自定义长按进度View
                 startActivity(new Intent(this, PressProgressActivity.class));
+                break;
+            case R.id.tv_sample_14://使用markwon加载富文本
+                startActivity(new Intent(this, MarkwonActivity.class));
+                break;
+            case R.id.tv_sample_15://使用webview加载html标签
+                startActivity(new Intent(this, WebViewActivity.class));
                 break;
         }
     }

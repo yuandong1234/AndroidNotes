@@ -3,7 +3,7 @@ package com.yuong.notes.widget.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.DimenRes;
+import androidx.annotation.DimenRes;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
