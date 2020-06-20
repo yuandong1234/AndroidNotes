@@ -2,8 +2,11 @@ package com.yuong.notes;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
+
+import com.yuong.notes.camera.FaceCameraActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class SampleActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -32,6 +35,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         findViewById(R.id.tv_sample_13).setOnClickListener(this);
         findViewById(R.id.tv_sample_14).setOnClickListener(this);
         findViewById(R.id.tv_sample_15).setOnClickListener(this);
+        findViewById(R.id.tv_sample_16).setOnClickListener(this);
     }
 
     @Override
@@ -81,6 +85,9 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.tv_sample_15://使用webview加载html标签
                 startActivity(new Intent(this, WebViewActivity.class));
+                break;
+            case R.id.tv_sample_16://自定义相机
+                startActivity(new Intent(this, FaceCameraActivity.class));
                 break;
         }
     }

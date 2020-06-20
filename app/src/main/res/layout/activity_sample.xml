@@ -221,6 +221,21 @@
                 android:text="使用webview加载html标签"
                 android:textColor="#3f3f3f" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#dcdcdc" />
+
+            <TextView
+                android:id="@+id/tv_sample_16"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="自定义相机"
+                android:textColor="#3f3f3f" />
+
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
