@@ -105,6 +105,11 @@ public class CameraHelper implements ICamera {
         if (width == 0 || height == 0) {
             return;
         }
+
+        if (mCamera == null || holder == null) {
+            return;
+        }
+
         Log.e(TAG, "窗口大小： width : " + width + "  height : " + height);
         Log.i(TAG, "camera start preview ");
         if (isPreviewing) {
@@ -117,51 +122,59 @@ public class CameraHelper implements ICamera {
 
         mCameraAngle = getCameraDisplayOrientation(context, CAMERA_DEFAULT);
 
-        if (holder == null) {
-            return;
-        }
-        if (mCamera != null) {
-            try {
-                mParams = mCamera.getParameters();
-                Camera.Size previewSize = getOptimalPreviewSize(mParams.getSupportedPreviewSizes(), (int) width, (int) height);
-                Camera.Size pictureSize = getBestPictureSize(mParams.getSupportedPictureSizes(), height, width, width);
+        try {
+            mParams = mCamera.getParameters();
+            Camera.Size previewSize = getOptimalPreviewSize(mParams.getSupportedPreviewSizes(), (int) width, (int) height);
+            Camera.Size pictureSize = getBestPictureSize(mParams.getSupportedPictureSizes(), height, width, width);
 
-                mParams.setPreviewSize(previewSize.width, previewSize.height);
-                Log.e(TAG, "preview_width : " + previewSize.width + "  preview_height : " + previewSize.height);
-                Log.e(TAG, "picture_width : " + pictureSize.width + "  picture_height : " + pictureSize.height);
+            mParams.setPreviewSize(previewSize.width, previewSize.height);
+            Log.e(TAG, "preview_width : " + previewSize.width + "  preview_height : " + previewSize.height);
+            Log.e(TAG, "picture_width : " + pictureSize.width + "  picture_height : " + pictureSize.height);
 
-                mPreviewWidth = previewSize.width;
-                mPreviewHeight = previewSize.height;
+            mPreviewWidth = previewSize.width;
+            mPreviewHeight = previewSize.height;
 
-                if (pictureSize != null) {
-                    mParams.setPictureSize(pictureSize.width, pictureSize.height);
-                } else {
-                    mParams.setPictureSize(1280, 720);
-                }
-
-                if (isSupportedFocusMode(mParams.getSupportedFocusModes(), Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-                    mParams.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-                } else if (isSupportedFocusMode(mParams.getSupportedFocusModes(), Camera.Parameters.FOCUS_MODE_AUTO)) {
-                    mParams.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-                }
-
-
-                if (isSupportedPictureFormats(mParams.getSupportedPictureFormats(), ImageFormat.JPEG)) {
-                    mParams.setPictureFormat(ImageFormat.JPEG);
-                    mParams.setJpegQuality(100);
-                }
-                mCamera.setParameters(mParams);
-                mParams = mCamera.getParameters();
-                mCamera.setPreviewDisplay(holder);  //SurfaceView
-                mCamera.setDisplayOrientation(mCameraAngle);//浏览角度
-//                mCamera.setPreviewCallback(this); //每一帧回调
-                mCamera.startPreview();//启动浏览
-                isCanCapture = true;
-                isPreviewing = true;
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (pictureSize != null) {
+                mParams.setPictureSize(pictureSize.width, pictureSize.height);
+            } else {
+                mParams.setPictureSize(1280, 720);
             }
+
+            if (isSupportedFocusMode(mParams.getSupportedFocusModes(), Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                mParams.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            } else if (isSupportedFocusMode(mParams.getSupportedFocusModes(), Camera.Parameters.FOCUS_MODE_AUTO)) {
+                mParams.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            }
+
+
+            if (isSupportedPictureFormats(mParams.getSupportedPictureFormats(), ImageFormat.JPEG)) {
+                mParams.setPictureFormat(ImageFormat.JPEG);
+                mParams.setJpegQuality(100);
+            }
+
+            mParams.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_AUTO);
+
+            float step = mParams.getExposureCompensationStep();
+            int min = mParams.getMinExposureCompensation();
+            int max = mParams.getMaxExposureCompensation();
+            int cur = mParams.getExposureCompensation();
+            Log.e(TAG, "step : " + step);
+            Log.e(TAG, "min : " + min);
+            Log.e(TAG, "max : " + max);
+            Log.e(TAG, "cur : " + cur);
+            mParams.setExposureCompensation((mParams.getMaxExposureCompensation() / 2));
+            mCamera.setParameters(mParams);
+            mParams = mCamera.getParameters();
+            mCamera.setPreviewDisplay(holder);  //SurfaceView
+            mCamera.setDisplayOrientation(mCameraAngle);//浏览角度
+//                mCamera.setPreviewCallback(this); //每一帧回调
+            mCamera.startPreview();//启动浏览
+            isCanCapture = true;
+            isPreviewing = true;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
     }
 
     @Override
@@ -351,6 +364,32 @@ public class CameraHelper implements ICamera {
         return result;
     }
 
+    public boolean isSupportPreviewSize(double ratio) {
+        boolean isSupport = false;
+        Camera mCamera = null;
+        try {
+            mCamera = Camera.open(CAMERA_DEFAULT);
+            Camera.Parameters mParameters = mCamera.getParameters();
+            List<Camera.Size> sizes = mParameters.getSupportedPreviewSizes();
+            Collections.sort(sizes, sizeComparator);
+            for (Camera.Size size : sizes) {
+                Log.e(TAG, "preview support size : ratio : " + size.height * 1.0d / size.width + "  " + size.height + "x" + size.width);
+                if (size.height * 1.0d / size.width == ratio) {
+                    isSupport = true;
+                }
+            }
+            mCamera.setParameters(mParameters);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (mCamera != null) {
+                mCamera.release();
+                mCamera = null;
+            }
+        }
+        return isSupport;
+    }
+
 
     private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
         final double ASPECT_TOLERANCE = 0.1;
@@ -361,8 +400,25 @@ public class CameraHelper implements ICamera {
         Camera.Size optimalSize = null;
         double minDiff = Double.MAX_VALUE;
 
+        Collections.sort(sizes, sizeComparator);
+
         int targetWidth = w;
 
+        //先判断有没有相同比例的尺寸，选出最接近目标宽度的
+        for (Camera.Size size : sizes) {
+            double ratio = (double) size.height / size.width;
+            if (targetRatio == ratio && Math.abs(size.height - targetWidth) < minDiff) {
+                Log.i(TAG, "相同尺寸 ratio " + ratio + "   -----> " + size.width + "x" + size.height);
+                optimalSize = size;
+                minDiff = Math.abs(size.height - targetWidth);
+            }
+        }
+
+        if (optimalSize != null)
+            return optimalSize;
+
+        //没有相同的比列，则选择最接近的比列
+        minDiff = Double.MAX_VALUE;
         for (Camera.Size size : sizes) {
             double ratio = (double) size.width / size.height;
             Log.i(TAG, "ratio " + ratio + "   -----> " + size.width + "x" + size.height);
@@ -417,16 +473,32 @@ public class CameraHelper implements ICamera {
         Log.i(TAG, "Supported picture size: " + builder.toString());
         Log.i(TAG, "targetRatio " + targetRatio);
 
+        //先判断有没有相同比例的尺寸，选出最接近目标宽度的
+        for (Camera.Size size : list) {
+            double ratio = (double) size.height / size.width;
+            if (targetRatio == ratio && Math.abs(size.height - maxWidth) < minDiff) {
+                optimalSize = size;
+                minDiff = Math.abs(size.height - maxWidth);
+            }
+        }
+
+        if (optimalSize != null)
+            return optimalSize;
+
+        //没有相同的比列，则选择最接近的比列
+        minDiff = Double.MAX_VALUE;
         for (Camera.Size size : list) {
             double ratio = (double) size.height / size.width;
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
             Log.i(TAG, " size width : " + size.width + "  height : " + size.height);
-            if (size.height <= maxWidth) {
+            if (Math.abs(size.height - maxWidth) < minDiff) {
                 optimalSize = size;
+                minDiff = Math.abs(size.height - maxWidth);
             }
         }
 
         if (optimalSize == null) {
+            minDiff = Double.MAX_VALUE;
             for (Camera.Size size : list) {
                 if (Math.abs(size.height - maxWidth) < minDiff) {
                     optimalSize = size;

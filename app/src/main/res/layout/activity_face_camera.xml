@@ -6,7 +6,7 @@
     tools:context=".camera.FaceCameraActivity">
 
     <FrameLayout
-        android:id="@+id/rl_face_recognition_frame"
+        android:id="@+id/fl_face_recognition_frame"
         android:layout_width="264dp"
         android:layout_height="264dp"
         android:layout_centerHorizontal="true"
@@ -19,8 +19,10 @@
             android:layout_margin="2dp" />
 
         <ImageView
+            android:id="@+id/iv_face_recognition_outline"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="2dp"
             android:src="@mipmap/img_face_recognition_outline" />
 
         <ImageView
@@ -28,10 +30,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
-           android:adjustViewBounds="true"
+            android:adjustViewBounds="true"
             android:visibility="gone" />
 
         <ImageView
+            android:id="@+id/iv_face_recognition_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@mipmap/img_face_recognition_frame" />
@@ -41,7 +44,7 @@
         android:id="@+id/tv_notes"
         android:layout_width="260dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rl_face_recognition_frame"
+        android:layout_below="@+id/fl_face_recognition_frame"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
         android:text="请将整个头部置于框内，露出额头及耳朵，确保人脸正面无逆光和遮挡物，然后点击拍照。"
